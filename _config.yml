@@ -8,3 +8,5 @@ kramdown:
 plugins:                   # 这些插件对基础 SEO 和 RSS 订阅仍有帮助
   - jekyll-feed            # 生成 Atom feed (RSS)
   - jekyll-seo-tag         # 自动添加 SEO meta 标签
+# 头像图片路径（你刚刚上传的 picture.jpg）
+avatar_url: /assets/images/picture.jpg
