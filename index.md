@@ -3,6 +3,9 @@ layout: default # 或者你选择的主题提供的首页布局，比如 home
 title: 我的博客首页
 ---
 
+<!-- 显示头像 -->
+<img src="{{ site.avatar_url }}" alt="avatar" style="width: 120px; border-radius: 50%; margin-bottom: 20px;">
+
 # 欢迎来到我的博客！
 
 这里是一些最新的文章：
