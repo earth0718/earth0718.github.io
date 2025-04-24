@@ -1,17 +1,41 @@
-/* 隐藏 Hyvor Talk 评论区直到加载完成 */
+/* 隐藏 Hyvor Talk 直到加载完成 */
 hyvor-talk-comments {
     display: none;
 }
 
-/* 你可以在这里添加其他全局 CSS 样式 */
+/* 添加一些基础样式（强烈建议） */
 body {
-  font-family: sans-serif; /* 示例：设置一个默认字体 */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  line-height: 1.6;
   margin: 0;
   padding: 0;
+  color: #333; /* 深灰色文字 */
+  background-color: #fdfdfd; /* 接近白色的背景 */
 }
 .wrapper {
-  max-width: 800px; /* 示例：限制内容宽度 */
-  margin: 0 auto; /* 居中 */
-  padding: 20px;
+  max-width: 800px; /* 内容最大宽度 */
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px; /* 左右留白 */
+  padding-left: 15px;
 }
-/* ... 更多样式 ... */
+.site-header {
+  border-bottom: 1px solid #eee; /* 头部下方加一条线 */
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.site-title {
+  font-size: 1.6em;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.site-footer {
+  border-top: 1px solid #eee; /* 页脚上方加一条线 */
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 40px;
+  font-size: 0.9em;
+  color: #777; /* 浅灰色文字 */
+}
+/* 你可以继续添加更多样式... */
