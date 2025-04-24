@@ -1,0 +1,30 @@
+---
+layout: default
+---
+<article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title | escape }}</h1>
+    <!-- 你可以根据需要在这里添加日期等其他信息 -->
+    <!-- <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}</p> -->
+  </header>
+
+  <div class="post-content">
+    {{ content }}
+  </div>
+
+  <!-- Cusdis 评论区开始 -->
+  <hr> 
+  <h2>评论</h2> 
+
+  <div id="cusdis_thread"
+    data-host="https://cusdis.com"  
+    data-app-id="f8fb9a58-ea07-4edb-92f3-08003d933fd1"  <!-- 这里是你之前提供的 App ID -->
+    data-page-id="{{ page.url | absolute_url }}" 
+    data-page-url="{{ page.url | absolute_url }}"
+    data-page-title="{{ page.title }}"
+  ></div>
+  <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+  <!-- Cusdis 评论区结束 -->
+
+</article>
