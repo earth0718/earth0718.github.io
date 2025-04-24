@@ -1,3 +1,21 @@
+---
+layout: default
+---
+<article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title | escape }}</h1>
+    <!-- 你可以取消下面这行的注释来显示文章日期 -->
+    <!-- <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}</p> -->
+  </header>
+
+  <!-- 文章正文显示区域 -->
+  <div class="post-content">
+    {{ content }}  {# 这是显示文章正文的关键代码 #}
+  </div>
+  <!-- 文章正文显示区域结束 -->
+
+
   <!-- Cusdis 评论区开始 -->
   {% if site.cusdis.app_id %} 
     
@@ -15,3 +33,5 @@
     
   {% endif %} 
   <!-- Cusdis 评论区结束 -->
+
+</article>
