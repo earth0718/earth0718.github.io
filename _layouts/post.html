@@ -21,20 +21,19 @@ layout: default
 <div id="waline" class="mt-8"></div>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.css" />
-<script type="module">
-  import { init } from 'https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.mjs'
-
-  init({
+<script src="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.min.js"></script>
+<script>
+  Waline.init({
     el: '#waline',
     serverURL: 'https://my-earth2.vercel.app',
     lang: 'zh-CN',
-    dark: 'auto',       // 自动暗黑模式
-    login: 'disable',   // 允许匿名评论
+    dark: 'auto',
+    login: 'disable',
     emoji: [
       '//unpkg.com/@waline/emojis@1.1.0/weibo',
       '//unpkg.com/@waline/emojis@1.1.0/tw-emoji'
     ],
-    requiredMeta: ['nick', 'mail'], // 昵称、邮箱为必填
-  })
+    requiredMeta: ['nick', 'mail']
+  });
 </script>
 <!-- Waline 评论区结束 -->
