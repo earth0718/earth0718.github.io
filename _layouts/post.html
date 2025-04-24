@@ -14,17 +14,17 @@ layout: default
   </div>
 
   <!-- Cusdis 评论区开始 -->
+  {% if site.cusdis.app_id %} {# 检查 _config.yml 中是否设置了 app_id #}
   <hr> 
   <h2>评论</h2> 
 
   <div id="cusdis_thread"
     data-host="https://cusdis.com"  
-    data-app-id="f8fb9a58-ea07-4edb-92f3-08003d933fd1"  <!-- 这里是你之前提供的 App ID -->
+    data-app-id="{{ site.cusdis.app_id }}"  {# 从 _config.yml 读取 App ID #}
     data-page-id="{{ page.url | absolute_url }}" 
     data-page-url="{{ page.url | absolute_url }}"
     data-page-title="{{ page.title }}"
   ></div>
   <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+  {% endif %}
   <!-- Cusdis 评论区结束 -->
-
-</article>
