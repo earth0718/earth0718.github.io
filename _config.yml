@@ -9,4 +9,8 @@ plugins:                   # 这些插件对基础 SEO 和 RSS 订阅仍有帮�
   - jekyll-feed            # 生成 Atom feed (RSS)
   - jekyll-seo-tag         # 自动添加 SEO meta 标签
 # 头像图片路径（你刚刚上传的 picture.jpg）
-avatar_url: /assets/images/picture.jpg
+avatar_url: /assets/images/picture.jpg\
+
+# --- 在下面添加 Cusdis 配置 ---
+cusdis:
+  app_id: "f8fb9a58-ea07-4edb-92f3-08003d933fd1" # 这是你之前提供的 Cusdis App ID
