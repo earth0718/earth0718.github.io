@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: "en-US" }}"> <!-- 设置页面语言，可以从 _config.yml 读取 -->
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- 页面标题：优先使用页面自身的 title，如果没有则使用 _config.yml 中定义的 site.title -->
+  <title>{{ page.title | default: site.title | escape }}</title>
+
+  <!-- 链接主要的 CSS 文件 -->
+  <!-- !!! 重要：确保你的 CSS 文件确实放在 /assets/css/main.css !!! -->
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+
+  <!-- 其他可以在 head 中添加的元素： -->
+  <!-- 例如 SEO 描述 -->
+  <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+  <!-- 例如 Favicon 图标 -->
+  <!-- <link rel="shortcut icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}"> -->
+
+</head>
+
+<body>
+
+  <!-- 页面头部（可选，可以放网站标题、导航等） -->
+  <header class="site-header">
+    <!-- 示例：显示网站标题并链接到首页 -->
+    <!-- 你需要先在 _config.yml 中定义 title -->
+    <h1><a href="{{ "/" | relative_url }}">{{ site.title | default: "My Awesome Blog" | escape }}</a></h1>
+    <!-- 这里可以添加导航链接 -->
+  </header>
+
+  <!-- 主要内容区域 -->
+  <main class="page-content" aria-label="Content">
+    <div class="wrapper"> <!-- 一个常用的包裹层，用于控制宽度等 -->
+      <!-- !!! 关键：这里会插入来自具体页面或布局（如 post.html）的内容 !!! -->
+      {{ content }}
+    </div>
+  </main>
+
+  <!-- 页面底部（可选，可以放版权信息等） -->
+  <footer class="site-footer">
+    <div class="wrapper">
+      <p>© {{ 'now' | date: "%Y" }} {{ site.title | default: "Your Name/Site" }}. All rights reserved.</p>
+      <!-- 其他页脚内容 -->
+    </div>
+  </footer>
+
+  <!-- 你可以在这里添加 JavaScript 文件链接 -->
+  <!-- <script src="{{ '/assets/js/main.js' | relative_url }}"></script> -->
+
+</body>
+
+</html>
