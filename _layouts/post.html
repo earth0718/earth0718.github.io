@@ -17,24 +17,12 @@ layout: default
 
 </article>
 
-<!-- Waline 评论区开始 -->
-<div id="waline" class="mt-8"></div>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.css" />
-<script src="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.min.js"></script>
-<script>
-  Waline.init({
-    el: '#waline',
-    serverURL: 'https://my-earth2.vercel.app',
-    lang: 'zh-CN',
-    dark: 'auto',
-    login: 'disable',
-    emoji: [
-      '//unpkg.com/@waline/emojis@1.1.0/weibo',
-      '//unpkg.com/@waline/emojis@1.1.0/tw-emoji'
-    ],
-    requiredMeta: ['nick', 'mail']
-  });
-</script>
-<!-- Waline 评论区结束 -->
-
+<!-- Hyvor Talk 评论区开始 (Web Component) -->
+<div class="mt-8"> <!-- 保留了你原来 Waline div 的 class，如果不需要可以移除 -->
+  <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
+  <hyvor-talk-comments
+      website-id="13109"  <!-- 这里是你的 Hyvor Talk Website ID -->
+      page-id="{{ page.url | relative_url }}" <!-- 使用页面的相对路径作为唯一 ID -->
+  ></hyvor-talk-comments>
+</div>
+<!-- Hyvor Talk 评论区结束 -->
