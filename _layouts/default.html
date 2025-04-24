@@ -1,53 +1,64 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: "en-US" }}"> <!-- 设置页面语言，可以从 _config.yml 读取 -->
+<!-- 建议在 _config.yml 中添加 lang: zh-CN 来设置语言 -->
+<html lang="{{ site.lang | default: "zh-CN" }}">
 
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- 页面标题：优先使用页面自身的 title，如果没有则使用 _config.yml 中定义的 site.title -->
-  <title>{{ page.title | default: site.title | escape }}</title>
+  <!-- jekyll-seo-tag 会自动处理标题、描述、规范链接等 -->
+  <!-- 它会使用你在 _config.yml 中定义的 title, description, url -->
+  {% seo %}
 
-  <!-- 链接主要的 CSS 文件 -->
-  <!-- !!! 重要：确保你的 CSS 文件确实放在 /assets/css/main.css !!! -->
+  <!-- 链接你的主要 CSS 文件 -->
+  <!-- !!! 重要：确保你已创建 /assets/css/main.css 文件 !!! -->
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 
-  <!-- 其他可以在 head 中添加的元素： -->
-  <!-- 例如 SEO 描述 -->
-  <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
-  <!-- 例如 Favicon 图标 -->
+  <!-- 如果你想手动添加 Favicon (网站小图标) -->
   <!-- <link rel="shortcut icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}"> -->
+
+  <!-- 你可以在这里添加其他自定义的 head 内容 -->
 
 </head>
 
 <body>
 
-  <!-- 页面头部（可选，可以放网站标题、导航等） -->
   <header class="site-header">
-    <!-- 示例：显示网站标题并链接到首页 -->
-    <!-- 你需要先在 _config.yml 中定义 title -->
-    <h1><a href="{{ "/" | relative_url }}">{{ site.title | default: "My Awesome Blog" | escape }}</a></h1>
-    <!-- 这里可以添加导航链接 -->
+    <div class="wrapper"> <!-- 包裹层 -->
+      <!-- 显示网站标题并链接到首页 -->
+      <!-- 这里会使用 _config.yml 中的 title: Earth_zZ -->
+      <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
+
+      <!-- (可选) 在标题旁边显示头像 -->
+      <!-- {% if site.avatar_url %}
+        <img src="{{ site.avatar_url | relative_url }}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; margin-left: 10px;">
+      {% endif %} -->
+
+      <!-- (可选) 在这里添加导航菜单 -->
+      <!-- <nav class="site-nav">
+        <a href="{{ "/" | relative_url }}">首页</a>
+        <a href="/about/">关于</a>
+      </nav> -->
+    </div>
   </header>
 
-  <!-- 主要内容区域 -->
   <main class="page-content" aria-label="Content">
-    <div class="wrapper"> <!-- 一个常用的包裹层，用于控制宽度等 -->
-      <!-- !!! 关键：这里会插入来自具体页面或布局（如 post.html）的内容 !!! -->
+    <div class="wrapper">
+      <!-- 插入具体页面的内容 -->
       {{ content }}
     </div>
   </main>
 
-  <!-- 页面底部（可选，可以放版权信息等） -->
   <footer class="site-footer">
     <div class="wrapper">
-      <p>© {{ 'now' | date: "%Y" }} {{ site.title | default: "Your Name/Site" }}. All rights reserved.</p>
-      <!-- 其他页脚内容 -->
+       <!-- 页脚信息 -->
+       <p>© {{ 'now' | date: "%Y" }} {{ site.title | escape }}. {{ site.description | escape }}</p>
+       <!-- 可以添加其他页脚链接或信息 -->
     </div>
   </footer>
 
-  <!-- 你可以在这里添加 JavaScript 文件链接 -->
+  <!-- (可选) 在这里链接 JavaScript 文件 -->
   <!-- <script src="{{ '/assets/js/main.js' | relative_url }}"></script> -->
 
 </body>
