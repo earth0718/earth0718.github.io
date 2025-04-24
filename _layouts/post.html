@@ -1,34 +1,17 @@
----
-layout: default
----
-<article class="post">
-
-  <header class="post-header">
-    <h1 class="post-title">{{ page.title | escape }}</h1>
-    <!-- 你可以取消下面这行的注释来显示文章日期 -->
-    <!-- <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}</p> -->
-  </header>
-
-  <div class="post-content">
-    {{ content }}
-  </div>
-
   <!-- Cusdis 评论区开始 -->
-  {% if site.cusdis.app_id %}  {# 检查 _config.yml 中是否定义了 cusdis.app_id #}
+  {% if site.cusdis.app_id %} 
     
     <hr> 
     <h2>评论</h2> 
 
     <div id="cusdis_thread"
       data-host="https://cusdis.com"  
-      data-app-id="{{ site.cusdis.app_id }}"  {# 从 _config.yml 读取 App ID #}
+      data-app-id="{{ site.cusdis.app_id }}" 
       data-page-id="{{ page.url | absolute_url }}" 
       data-page-url="{{ page.url | absolute_url }}"
       data-page-title="{{ page.title }}"
     ></div>
     <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
     
-  {% endif %} {# 结束 if 条件判断 #}
+  {% endif %} 
   <!-- Cusdis 评论区结束 -->
-
-</article>
