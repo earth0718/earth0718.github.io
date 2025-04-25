@@ -1,28 +1,50 @@
 ---
+# 如果你的主题中 'layout: post' 强制了你不想要的样式或结构，
+# 你可能需要考虑使用 'layout: default' (如果主题有的话)，
+# 或者甚至是 'layout: null' 并手动引入必要的 CSS/JS。
+# 目前我们假设 'layout: post' 是可接受的或提供了基础样式。
 layout: post
 ---
-<article class="post">
 
-  <header class="post-header">
-    <h1 class="post-title">{{ page.title | escape }}</h1>
-    <!-- 你可以取消下面这行的注释来显示文章日期 -->
-    <!-- <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}</p> -->
-  </header>
+<!-- 用于内容居中的外层包裹 Div -->
+<div style="max-width: 800px; margin: 2rem auto; padding: 0 1rem; text-align: center;">
 
-  <!-- 文章正文显示区域 -->
-  <div class="post-content">
-    {{ content }}  
-  </div>
-  <!-- 文章正文显示区域结束 -->
+    <!-- 1. 网站/作者主标题 -->
+    <h1 style="margin-bottom: 3rem; font-size: 2.5em;">Earth_zZ</h1>
 
-</article>
+    <!-- 2. 页面内容区域 -->
+    <!-- 移除了之前的 article, post-header 结构 -->
+    <!-- '{{ content }}' 会渲染你的 Markdown 内容，包括 "欢迎" H1 -->
+    <div class="page-content" style="text-align: left; margin-bottom: 3rem;">
+        {{ content }}
+    </div>
 
-<!-- Hyvor Talk 评论区开始 (Web Component) -->
-<div class="mt-8"> <!-- 保留了你原来 Waline div 的 class，如果不需要可以移除 -->
-  <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
-  <hyvor-talk-comments
-      website-id="13109"  <!-- 这里是你的 Hyvor Talk Website ID -->
-      page-id="{{ page.url | relative_url }}" <!-- 使用页面的相对路径作为唯一 ID -->
-  ></hyvor-talk-comments>
+    <!-- 3. Hyvor Talk 评论区 -->
+    <!-- 为评论区添加了一个包裹 div，并重置了文本对齐方式 -->
+    <div class="comments-section" style="margin-top: 3rem; text-align: left;">
+        <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
+        <hyvor-talk-comments
+            website-id="13109"  <!-- 确认这是你正确的 Hyvor Talk Website ID -->
+            page-id="{{ page.url | relative_url }}" <!-- 使用页面 URL 作为唯一 ID -->
+        ></hyvor-talk-comments>
+    </div>
+
+    <!-- 4. 版权页脚 -->
+    <footer style="margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid #eee; font-size: 0.9em; color: #888;">
+        © 2025 Earth_zZ. 初学者的博客
+    </footer>
+
 </div>
-<!-- Hyvor Talk 评论区结束 -->
+<!-- 外层包裹 Div 结束 -->
+
+<!-- 说明:
+  - 这里为了简洁使用了内联样式 (inline styles)。更好的做法是将这些样式
+    移动到你的 CSS 文件中，并使用类名（例如 `.content-wrapper`, `.site-title`, `.page-footer`）。
+  - `max-width: 800px;` 限制内容在宽屏上不会变得太宽，你可以根据需要调整。
+  - `margin: 2rem auto;` 添加了上下边距，并通过 `auto` 的左右边距使整个块水平居中。
+  - `padding: 0 1rem;` 在左右两侧添加内边距，防止文本在小屏幕上紧贴边缘。
+  - 外层包裹 div 的 `text-align: center;` 使其内部的*行内*元素（如主标题 H1 和页脚文本）居中。
+  - 页面内容 `page-content` 和评论区 `comments-section` 的 div 设置了 `text-align: left;`，
+    因为段落文本和评论内容通常在左对齐时更易于阅读（即使它们所在的块是居中的）。如果你希望文本也居中，可以修改这里。
+  - 确保 Hyvor Talk 的 `website-id` 是正确的。
+-->
