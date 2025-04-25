@@ -1,7 +1,3 @@
-/* 隐藏 Hyvor Talk 直到加载完成 */
-hyvor-talk-comments {
-    display: none;
-}
 
 /* 添加一些基础样式（强烈建议） */
 body {
