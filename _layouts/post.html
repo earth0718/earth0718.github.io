@@ -17,12 +17,3 @@ layout: post
 
 </article>
 
-<!-- Hyvor Talk 评论区开始 (Web Component) -->
-<div class="mt-8"> <!-- 保留了你原来 Waline div 的 class，如果不需要可以移除 -->
-  <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
-  <hyvor-talk-comments
-      website-id="13109"  <!-- 这里是你的 Hyvor Talk Website ID -->
-      page-id="{{ page.url | relative_url }}" <!-- 使用页面的相对路径作为唯一 ID -->
-  ></hyvor-talk-comments>
-</div>
-<!-- Hyvor Talk 评论区结束 -->
