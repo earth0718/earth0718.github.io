@@ -1,66 +1,56 @@
 <!DOCTYPE html>
-<!-- 建议在 _config.yml 中添加 lang: zh-CN 来设置语言 -->
-<html lang="{{ site.lang | default: "zh-CN" }}">
-
+<html lang="{{ site.lang | default: 'zh-CN' }}">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- jekyll-seo-tag 会自动处理标题、描述、规范链接等 -->
-  <!-- 它会使用你在 _config.yml 中定义的 title, description, url -->
   {% seo %}
 
-  <!-- 链接你的主要 CSS 文件 -->
-  <!-- !!! 重要：确保你已创建 /assets/css/main.css 文件 !!! -->
+  <!-- 主样式 -->
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 
-  <!-- 如果你想手动添加 Favicon (网站小图标) -->
-  <!-- <link rel="shortcut icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}"> -->
-
-  <!-- 你可以在这里添加其他自定义的 head 内容 -->
-
+  <!-- 如需 Favicon：
+  <link rel="shortcut icon" href="{{ '/favicon.ico' | relative_url }}">
+  -->
 </head>
 
 <body>
-
   <header class="site-header">
-    <div class="wrapper"> <!-- 包裹层 -->
-      <!-- 显示网站标题并链接到首页 -->
-      <!-- 这里会使用 _config.yml 中的 title: Earth_zZ -->
-      <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
-
-      <!-- (可选) 在标题旁边显示头像 -->
-      <!-- {% if site.avatar_url %}
-        <img src="{{ site.avatar_url | relative_url }}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; margin-left: 10px;">
-      {% endif %} -->
-
-      <!-- (可选) 在这里添加导航菜单 -->
-      <!-- <nav class="site-nav">
-        <a href="{{ "/" | relative_url }}">首页</a>
-        <a href="/about/">关于</a>
-      </nav> -->
+    <div class="wrapper">
+      <a class="site-title" rel="author" href="{{ '/' | relative_url }}">
+        {{ site.title | escape }}
+      </a>
+      {# — 如需头像 / 导航，可在此添加 — #}
     </div>
   </header>
 
   <main class="page-content" aria-label="Content">
     <div class="wrapper">
-      <!-- 插入具体页面的内容 -->
       {{ content }}
     </div>
+
+    {%- comment -%}
+      仅当该页面属于 posts 集合时（即 _posts 下的文章）才插入 Hyvor Talk。
+      如果你以后想手动关闭某篇文章的评论，可在 Front-Matter 写 comments: false
+    {%- endcomment -%}
+    {% if page.collection == 'posts' and page.comments != false %}
+      <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
+      <hyvor-talk-comments
+        website-id="13109"
+        page-id="{{ page.url | relative_url }}">
+      </hyvor-talk-comments>
+    {% endif %}
   </main>
 
   <footer class="site-footer">
     <div class="wrapper">
-       <!-- 页脚信息 -->
-       <p>© {{ 'now' | date: "%Y" }} {{ site.title | escape }}. {{ site.description | escape }}</p>
-       <!-- 可以添加其他页脚链接或信息 -->
+      <p>© {{ 'now' | date: '%Y' }} {{ site.title | escape }}. {{ site.description | escape }}</p>
     </div>
   </footer>
 
-  <!-- (可选) 在这里链接 JavaScript 文件 -->
-  <!-- <script src="{{ '/assets/js/main.js' | relative_url }}"></script> -->
-
+  <!-- 如需额外脚本：
+  <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+  -->
 </body>
-
 </html>
