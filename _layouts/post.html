@@ -1,82 +1,23 @@
-<!DOCTYPE html>
-<html lang="{{ site.lang | default: 'zh-CN' }}">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% seo %} {# Jekyll SEO Tag 插件输出 SEO 元信息 #}
-  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}"> {# 引用主题的 CSS #}
-  <!-- 你可以在这里添加 Favicon 链接 -->
-  <!-- <link rel="shortcut icon" href="{{ '/favicon.ico' | relative_url }}"> -->
-</head>
-<body>
-  {# --- 站点页眉 --- #}
-  {# 保留模板的通用页眉，通常包含网站标题和导航 #}
-  <header class="site-header">
-    <div class="wrapper">
-      <a class="site-title" rel="author" href="{{ '/' | relative_url }}">
-        {{ site.title | escape }} {# 显示 _config.yml 中配置的网站标题 #}
-      </a>
-      <!-- 这里可以放置导航链接等 -->
-    </div>
+layout: post
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title | escape }}</h1>
+    <!-- 可选：取消下面这行注释显示文章的日期 -->
+    <!-- <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}</p> -->
   </header>
+  <!-- 文章正文显示区域 -->
+  <div class="post-content">
+    {{ content }}  
+  </div>
+  <!-- 文章正文显示区域结束 -->
+</article>
 
-  {# --- 主要内容区域 --- #}
-  <main class="page-content" aria-label="Content">
-    {# 使用主题的 wrapper 类来限制内容宽度并居中 #}
-    <div class="wrapper">
-
-      {# --- 这里开始是我们自定义的居中内容块 --- #}
-
-      {# 1. 自定义的大标题 "Earth_zZ" #}
-      <h1 style="text-align: center; margin-top: 1rem; margin-bottom: 3rem; font-size: 2.5em;">
-        Earth_zZ
-      </h1>
-
-      {# 2. 页面/文章正文内容 (来自 Markdown 文件) #}
-      {# 让正文内容保持左对齐，更易读 #}
-      <div class="post-content-wrapper" style="text-align: left; margin-bottom: 3rem;">
-        {{ content }} {# Jekyll 会将 Markdown 转换后的 HTML 插入这里 #}
-      </div>
-
-      {# 3. Hyvor Talk 评论区 (条件加载) #}
-      {% comment %}
-        只有当页面是 _posts 集合中的文章，
-        并且文章的 front matter 没有设置 comments: false 时，
-        才加载评论组件。
-      {% endcomment %}
-      {% if page.collection == 'posts' and page.comments != false %}
-        <div class="comments-section" style="margin-top: 3rem; text-align: left;"> {# 包裹评论区，设置上边距和左对齐 #}
-          <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
-          <hyvor-talk-comments
-            website-id="13109"  {# 你的 Hyvor Talk Website ID #}
-            page-id="{{ page.url | relative_url }}" {# 使用页面的相对 URL 作为唯一 ID，这比 slugify 标题更可靠 #}
-          ></hyvor-talk-comments>
-        </div>
-      {% endif %}
-
-      {# 4. 自定义的页脚信息 (Earth_zZ 的博客) #}
-      <footer class="custom-page-footer" style="text-align: center; margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid #eee; font-size: 0.9em; color: #888;">
-        © {% assign current_year = 'now' | date: '%Y' %}{{ current_year }} Earth_zZ. 初学者的博客
-        {# 使用 'now' 获取当前年份，比写死 2025 好 #}
-      </footer>
-
-      {# --- 自定义居中内容块结束 --- #}
-
-    </div> {# .wrapper 结束 #}
-  </main>
-
-  {# --- 站点页脚 --- #}
-  {# 保留模板的通用页脚，通常包含版权和主题信息 #}
-  <footer class="site-footer">
-    <div class="wrapper">
-      {# 这里是模板自带的页脚内容，你可以保留或修改 #}
-      <p>
-         {# 通常这里会显示类似 "_config.yml" 中的 site.title 和 site.description #}
-         Powered by Jekyll. Theme based on minima (example).
-      </p>
-    </div>
-  </footer>
-
-</body>
-</html>
+<!-- Hyvor Talk 评论区开始 (Web Component) -->
+<div class="mt-8"> <!-- 保留了你原来 Waline div 的 class，如果不需要可以移除 -->
+  <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
+  <hyvor-talk-comments
+      website-id="13109"  <!-- 这里是你的 Hyvor Talk Website ID -->
+      page-id="{{ page.url | relative_url }}" <!-- 使用页面的相对路径作为唯一 ID -->
+  ></hyvor-talk-comments>
+</div>
+<!-- Hyvor Talk 评论区结束 -->
