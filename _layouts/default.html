@@ -22,19 +22,20 @@
 
   <main class="page-content" aria-label="Content">
     <div class="wrapper">
-      {{ content }}
-    </div>
+      {{ content }} <!-- 页面或文章的特定内容会插入到这里 -->
 
-    {% comment %}
-      仅在 _posts 下的文章且未主动关闭 comments 时显示 Hyvor Talk
-    {% endcomment %}
-    {% if page.collection == 'posts' and page.comments != false %}
-      <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
-      <hyvor-talk-comments
-        website-id="13109"
-        page-id="{{ page.url | relative_url }}"> <!-- 使用页面的相对 URL -->
-      </hyvor-talk-comments>
-    {% endif %}
+      {% comment %}
+        Hyvor Talk 评论区 - 现在会显示在所有使用此布局的页面上
+      {% endcomment %}
+      <div class="post-comments mt-8"> <!-- 保留外层 div 用于可能的样式控制 -->
+        <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
+        <hyvor-talk-comments
+          website-id="13109"  <!-- 你的 Hyvor Talk Website ID -->
+          page-id="{{ page.url | relative_url }}" <!-- 使用页面的相对 URL 作为唯一 ID -->
+        ></hyvor-talk-comments>
+      </div>
+
+    </div>
   </main>
 
   <footer class="site-footer">
