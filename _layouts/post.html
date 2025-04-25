@@ -1,32 +1,25 @@
 ---
-# 指定使用基础布局文件，假设它是 _layouts/default.html
-# 如果你的基础布局文件名不同，请修改这里的 'default'
 layout: default
 ---
 <article class="post">
 
   <header class="post-header">
     <h1 class="post-title">{{ page.title | escape }}</h1>
-    <!-- 你可以取消下面这行的注释来显示文章日期 -->
     <!-- <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}</p> -->
   </header>
 
-  <!-- 文章正文显示区域 -->
-  <!-- 注意：这里的 {{ content }} 是指文章 Markdown 文件转换后的内容 -->
   <div class="post-content">
     {{ content }}
   </div>
-  <!-- 文章正文显示区域结束 -->
 
 </article>
 
 <!-- Hyvor Talk 评论区开始 (Web Component) -->
-<!-- 这个评论区会无条件地显示在这个布局被应用的所有页面下方 -->
-<div class="mt-8"> <!-- 保留了你原来 Waline div 的 class，如果不需要可以移除 -->
+<div class="mt-8">
   <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
   <hyvor-talk-comments
-      website-id="13109"  <!-- 这里是你的 Hyvor Talk Website ID -->
-      page-id="{{ page.url | relative_url }}" <!-- 使用页面的相对路径作为唯一 ID (来自第一段代码，确保功能正常) -->
+      website-id="13109"
+      page-id="{{ page.url | relative_url }}"
   ></hyvor-talk-comments>
 </div>
 <!-- Hyvor Talk 评论区结束 -->
