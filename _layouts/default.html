@@ -32,7 +32,7 @@
       <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
       <hyvor-talk-comments
         website-id="13109"
-        page-id="{{ page.title | slugify }}">
+        page-id="{{ page.url | relative_url }}"> <!-- 使用页面的相对 URL -->
       </hyvor-talk-comments>
     {% endif %}
   </main>
