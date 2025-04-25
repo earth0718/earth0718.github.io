@@ -12,24 +12,30 @@ body {
   color: #333; /* 深灰色文字 */
   background-color: #fdfdfd; /* 接近白色的背景 */
 }
+
+/* 容器样式 */
 .wrapper {
   max-width: 800px; /* 内容最大宽度 */
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: 15px; /* 左右留白 */
-  padding-left: 15px;
+  margin: 0 auto;   /* 内容居中 */
+  padding: 0 15px;  /* 左右内边距 */
 }
+
+/* 头部样式 */
 .site-header {
   border-bottom: 1px solid #eee; /* 头部下方加一条线 */
   padding-top: 20px;
   padding-bottom: 20px;
 }
+
+/* 站点标题样式 */
 .site-title {
   font-size: 1.6em;
   font-weight: bold;
   text-decoration: none;
   color: #333;
 }
+
+/* 页脚样式 */
 .site-footer {
   border-top: 1px solid #eee; /* 页脚上方加一条线 */
   padding-top: 20px;
@@ -38,4 +44,10 @@ body {
   font-size: 0.9em;
   color: #777; /* 浅灰色文字 */
 }
-/* 你可以继续添加更多样式... */
+
+/* 文章正文样式 */
+.post-content {
+  width: 80%;        /* 设置适当宽度 */
+  margin: 0 auto;    /* 居中对齐 */
+  padding: 20px;     /* 添加内边距 */
+}
