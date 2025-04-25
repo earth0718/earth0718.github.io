@@ -4,24 +4,19 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   {% seo %}
-
-  <!-- 主样式 -->
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
-
-  <!-- 如需 Favicon：
+  <!-- 若需 favicon：
   <link rel="shortcut icon" href="{{ '/favicon.ico' | relative_url }}">
   -->
 </head>
-
 <body>
   <header class="site-header">
     <div class="wrapper">
       <a class="site-title" rel="author" href="{{ '/' | relative_url }}">
         {{ site.title | escape }}
       </a>
-      {# — 如需头像 / 导航，可在此添加 — #}
+      <!-- 这里可以放头像或导航 -->
     </div>
   </header>
 
@@ -30,10 +25,9 @@
       {{ content }}
     </div>
 
-    {%- comment -%}
-      仅当该页面属于 posts 集合时（即 _posts 下的文章）才插入 Hyvor Talk。
-      如果你以后想手动关闭某篇文章的评论，可在 Front-Matter 写 comments: false
-    {%- endcomment -%}
+    {% comment %}
+      仅在 _posts 下的文章且未主动关闭 comments 时显示 Hyvor Talk
+    {% endcomment %}
     {% if page.collection == 'posts' and page.comments != false %}
       <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
       <hyvor-talk-comments
@@ -48,9 +42,5 @@
       <p>© {{ 'now' | date: '%Y' }} {{ site.title | escape }}. {{ site.description | escape }}</p>
     </div>
   </footer>
-
-  <!-- 如需额外脚本：
-  <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
-  -->
 </body>
 </html>
