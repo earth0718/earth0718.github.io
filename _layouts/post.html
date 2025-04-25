@@ -1,14 +1,28 @@
-title: Earth_zZ
-description: 初学者的博客
-url: "https://earth0718.github.io" # 替换成你自己的实际网址
-baseurl: ""                    # 如果博客在子目录，则设置为 "/你的子目录名"，否则留空
-markdown: kramdown           # Markdown 渲染器
-kramdown:
-  input: GFM               # 启用 GitHub 风格的 Markdown
-plugins:                   # 这些插件对基础 SEO 和 RSS 订阅仍有帮助
-  - jekyll-feed            # 生成 Atom feed (RSS)
-  - jekyll-seo-tag         # 自动添加 SEO meta 标签
-# 头像图片路径（你刚刚上传的 picture.jpg）
-avatar_url: /assets/images/picture.jpg
+---
+layout: post
+---
+<article class="post">
 
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title | escape }}</h1>
+    <!-- 你可以取消下面这行的注释来显示文章日期 -->
+    <!-- <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}</p> -->
+  </header>
 
+  <!-- 文章正文显示区域 -->
+  <div class="post-content">
+    {{ content }}  
+  </div>
+  <!-- 文章正文显示区域结束 -->
+
+</article>
+
+<!-- Hyvor Talk 评论区开始 (Web Component) -->
+<div class="mt-8"> <!-- 保留了你原来 Waline div 的 class，如果不需要可以移除 -->
+  <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
+  <hyvor-talk-comments
+      website-id="13109"  <!-- 这里是你的 Hyvor Talk Website ID -->
+      page-id="{{ page.url | relative_url }}" <!-- 使用页面的相对路径作为唯一 ID -->
+  ></hyvor-talk-comments>
+</div>
+<!-- Hyvor Talk 评论区结束 -->
