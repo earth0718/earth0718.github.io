@@ -29,11 +29,6 @@
       仅在 _posts 下的文章且未主动关闭 comments 时显示 Hyvor Talk
     {% endcomment %}
     {% if page.collection == 'posts' and page.comments != false %}
-      <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
-      <hyvor-talk-comments
-        website-id="13109"
-        page-id="{{ page.title | slugify }}">
-      </hyvor-talk-comments>
     {% endif %}
   </main>
 

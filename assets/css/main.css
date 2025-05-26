@@ -1,31 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans&display=swap');
 
 /* 添加一些基础样式（强烈建议） */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: 'Open Sans', sans-serif;
   line-height: 1.6;
   margin: 0;
   padding: 0;
   color: #333; /* 深灰色文字 */
-  background-color: #fdfdfd; /* 接近白色的背景 */
+  background: linear-gradient(to right, #e2e2e2, #f9f9f9); /* 接近白色的背景 */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
 }
 
 /* 容器样式 */
 .wrapper {
-  max-width: 800px; /* 内容最大宽度 */
+  max-width: 960px; /* 内容最大宽度 */
   margin: 0 auto;   /* 内容居中 */
-  padding: 0 15px;  /* 左右内边距 */
+  padding: 20px;  /* 左右内边距 */
 }
 
 /* 头部样式 */
 .site-header {
   border-bottom: 1px solid #eee; /* 头部下方加一条线 */
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px 0;
 }
 
 /* 站点标题样式 */
 .site-title {
-  font-size: 1.6em;
+  font-size: 2em;
   font-weight: bold;
   text-decoration: none;
   color: #333;
@@ -34,16 +38,32 @@ body {
 /* 页脚样式 */
 .site-footer {
   border-top: 1px solid #eee; /* 页脚上方加一条线 */
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px 0;
   margin-top: 40px;
   font-size: 0.9em;
   color: #777; /* 浅灰色文字 */
 }
 
+/* Post Card Styles */
+.post-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
 /* 文章正文样式 */
 .post-content {
-  width: 80%;        /* 设置适当宽度 */
-  margin: 0 auto;    /* 居中对齐 */
+  line-height: 1.7;
   padding: 20px;     /* 添加内边距 */
+}
+
+.post-content a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.post-content a:hover {
+  text-decoration: underline;
 }
