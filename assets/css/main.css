@@ -1,17 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans&display=swap');
 
+:root {
+  --background-color: #fdfdfd;
+  --text-color: #333;
+  --link-color: #007bff;
+  --link-hover-color: #0056b3;
+  --header-bg: transparent;
+  --header-border-color: #eee;
+  --footer-bg: transparent;
+  --footer-border-color: #eee;
+  --footer-text-color: #777;
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  --toc-bg: #f8f9fa;
+  --toc-border-color: #e9ecef;
+  --toc-title-color: #495057;
+  --button-bg: #efefef;
+  --button-text: #333;
+  --body-gradient-start: #e2e2e2;
+  --body-gradient-end: #f9f9f9;
+}
+
 /* 添加一些基础样式（强烈建议） */
 body {
   font-family: 'Open Sans', sans-serif;
   line-height: 1.6;
   margin: 0;
   padding: 0;
-  color: #333; /* 深灰色文字 */
-  background: linear-gradient(to right, #e2e2e2, #f9f9f9); /* 接近白色的背景 */
+  color: var(--text-color);
+  background: linear-gradient(to right, var(--body-gradient-start), var(--body-gradient-end));
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Montserrat', sans-serif;
+  color: var(--text-color); /* Ensure headings also use text-color */
 }
 
 /* 容器样式 */
@@ -23,7 +45,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* 头部样式 */
 .site-header {
-  border-bottom: 1px solid #eee; /* 头部下方加一条线 */
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--header-border-color);
   padding: 20px 0;
 }
 
@@ -32,23 +55,24 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 2em;
   font-weight: bold;
   text-decoration: none;
-  color: #333;
+  color: var(--text-color);
 }
 
 /* 页脚样式 */
 .site-footer {
-  border-top: 1px solid #eee; /* 页脚上方加一条线 */
+  background-color: var(--footer-bg);
+  border-top: 1px solid var(--footer-border-color);
   padding: 20px 0;
   margin-top: 40px;
   font-size: 0.9em;
-  color: #777; /* 浅灰色文字 */
+  color: var(--footer-text-color);
 }
 
 /* Post Card Styles */
 .post-card {
-  background-color: #ffffff;
+  background-color: var(--card-bg);
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--card-shadow);
   margin-bottom: 20px;
   padding: 20px;
 }
@@ -60,10 +84,115 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .post-content a {
-  color: #007bff;
+  color: var(--link-color);
   text-decoration: none;
 }
 
 .post-content a:hover {
   text-decoration: underline;
+  color: var(--link-hover-color);
+}
+
+/* Table of Contents Styles */
+#toc-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: var(--toc-bg);
+  border-radius: 8px;
+  border: 1px solid var(--toc-border-color);
+}
+
+#toc-container h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.4em;
+  color: var(--toc-title-color);
+}
+
+#toc {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0; /* Remove default bottom margin from ul */
+}
+
+#toc li a {
+  text-decoration: none;
+  color: var(--link-color);
+  display: block; /* Make the entire area clickable */
+  padding: 5px 0; /* Add some padding for better clickability */
+}
+
+#toc li a:hover {
+  text-decoration: underline;
+  color: var(--link-hover-color);
+}
+
+#toc li.toc-level-2 {
+  padding-left: 20px;
+}
+
+/* Dark Mode Variables */
+body.dark-mode {
+  --background-color: #1a1a1a;
+  --text-color: #e0e0e0;
+  --link-color: #6bb9ff;
+  --link-hover-color: #8bc7ff;
+  --header-bg: #222;
+  --header-border-color: #444;
+  --footer-bg: #222;
+  --footer-border-color: #444;
+  --footer-text-color: #aaa;
+  --card-bg: #2c2c2c;
+  --card-shadow: 0 4px 8px rgba(255,255,255,0.05); /* Lighter shadow for dark bg */
+  --toc-bg: #333;
+  --toc-border-color: #555;
+  --toc-title-color: #ccc;
+  --button-bg: #444;
+  --button-text: #e0e0e0;
+  --body-gradient-start: #121212; /* Darker gradient for dark mode */
+  --body-gradient-end: #1e1e1e;
+}
+
+/* Dark Mode Toggle Button Style */
+#darkModeToggle {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--text-color); /* Use text-color for border to ensure visibility */
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 1em; /* Adjusted from inline style for consistency */
+  float: right; /* Retain float from inline style */
+  /* Remove other inline styles if they are handled here or by variables */
+}
+
+/* Ensure the button icon in the header also uses the correct color */
+.site-header #darkModeToggle {
+    color: var(--text-color); /* Match general text color in header */
+    border-color: var(--text-color); /* Match general text color for border */
+    background-color: transparent; /* Make background transparent like site-title */
+}
+
+/* Back to Top Button Styles */
+#backToTopBtn {
+  display: none; /* Hidden by default, JS will manage visibility */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: var(--button-bg); /* Use theme variable */
+  color: var(--button-text); /* Use theme variable */
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 50%; /* Makes it round */
+  font-size: 18px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: opacity 0.3s, visibility 0.3s; /* For smooth show/hide if using opacity */
+}
+
+#backToTopBtn:hover {
+  background-color: var(--link-color); /* Use theme variable for hover background */
+  color: var(--card-bg); /* Use a contrasting color, like card background for text */
 }

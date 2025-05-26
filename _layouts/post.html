@@ -2,6 +2,10 @@
 layout: default
 ---
 <div class="post-card">
+  <div id="toc-container">
+    <h2>Table of Contents</h2>
+    <ul id="toc"></ul>
+  </div>
   <article class="post">
 
     <header class="post-header">
@@ -17,4 +21,5 @@ layout: default
     <!-- 文章正文显示区域结束 -->
 
   </article>
+  <script src="{{ '/assets/js/toc.js' | relative_url }}" defer></script>
 </div>
