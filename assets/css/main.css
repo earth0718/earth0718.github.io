@@ -6,7 +6,7 @@ body {
   margin: 0;
   padding: 0;
   color: #333; /* 深灰色文字 */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #667eea 100%);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -67,17 +67,15 @@ body {
 
 /* 主内容区域美化 */
 .page-content {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
-  border-radius: 20px;
+  background: transparent;
+  backdrop-filter: none;
+  border-radius: 0;
   margin: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
 }
 
 .page-content:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
 }
 
 /* 星星月亮装饰 */
@@ -126,55 +124,46 @@ body {
   padding: 0 15px;  /* 左右内边距 */
 }
 
-/* 头部样式 */
+/* 头部美化 */
 .site-header {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 20px;
-  padding-bottom: 20px;
-  margin: 20px 20px 0 20px;
-  border-radius: 20px 20px 0 0;
+  background: transparent;
+  backdrop-filter: none;
+  border-radius: 0;
+  margin: 20px;
   transition: all 0.3s ease;
 }
 
 .site-header:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: transparent;
 }
 
 /* 站点标题样式 */
 .site-title {
-  font-size: 1.8em;
+  font-size: 2.5em;
   font-weight: bold;
   text-decoration: none;
-  color: #fff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
 }
 
 .site-title:hover {
-  color: #fff;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 255, 255, 0.5);
   transform: scale(1.05);
 }
 
-/* 页脚样式 */
+/* 页脚美化 */
 .site-footer {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 20px;
-  padding-bottom: 20px;
-  margin: 0 20px 20px 20px;
-  border-radius: 0 0 20px 20px;
-  font-size: 0.9em;
-  color: rgba(255, 255, 255, 0.8);
-  text-align: center;
+  background: transparent;
+  backdrop-filter: none;
+  border-radius: 0;
+  margin: 20px;
   transition: all 0.3s ease;
 }
 
 .site-footer:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: transparent;
 }
 
 /* 文章正文样式 */
