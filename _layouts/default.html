@@ -11,6 +11,8 @@
   -->
 </head>
 <body>
+  <!-- 粒子容器 -->
+  <div class="particles-container" id="particles-container"></div>
   <header class="site-header">
     <div class="wrapper">
       <a class="site-title" rel="author" href="{{ '/' | relative_url }}">
@@ -35,5 +37,144 @@
       <p>© {{ 'now' | date: '%Y' }} {{ site.title | escape }}. {{ site.description | escape }}</p>
     </div>
   </footer>
+
+  <script>
+    // 粒子爆炸特效
+    function createParticleExplosion(x, y) {
+      const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8', '#f7dc6f'];
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // 随机颜色
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.background = color;
+        particle.style.boxShadow = `0 0 6px ${color}`;
+        
+        // 设置初始位置
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        
+        // 随机方向和距离
+        const angle = (Math.PI * 2 * i) / particleCount;
+        const distance = 50 + Math.random() * 100;
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+        
+        particle.style.setProperty('--dx', dx + 'px');
+        particle.style.setProperty('--dy', dy + 'px');
+        
+        document.body.appendChild(particle);
+        
+        // 动画结束后移除粒子
+        setTimeout(() => {
+          if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+          }
+        }, 1000);
+      }
+    }
+    
+    // 创建浮动背景粒子
+    function createFloatingParticles() {
+      const container = document.getElementById('particles-container');
+      const particleCount = 20;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'floating-particle';
+        
+        // 随机位置
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        
+        // 随机动画延迟
+        particle.style.animationDelay = Math.random() * 6 + 's';
+        particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+        
+        container.appendChild(particle);
+      }
+    }
+    
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 创建浮动粒子
+      createFloatingParticles();
+      
+      // 添加点击事件监听器
+      document.addEventListener('click', function(e) {
+        createParticleExplosion(e.clientX, e.clientY);
+      });
+      
+      // 添加鼠标移动时的微妙效果
+      document.addEventListener('mousemove', function(e) {
+        if (Math.random() < 0.1) { // 10% 概率
+          const sparkle = document.createElement('div');
+          sparkle.style.position = 'absolute';
+          sparkle.style.left = e.clientX + 'px';
+          sparkle.style.top = e.clientY + 'px';
+          sparkle.style.width = '2px';
+          sparkle.style.height = '2px';
+          sparkle.style.background = '#fff';
+          sparkle.style.borderRadius = '50%';
+          sparkle.style.pointerEvents = 'none';
+          sparkle.style.animation = 'sparkle 0.6s ease-out forwards';
+          sparkle.style.zIndex = '1000';
+          
+          document.body.appendChild(sparkle);
+          
+          setTimeout(() => {
+            if (sparkle.parentNode) {
+              sparkle.parentNode.removeChild(sparkle);
+            }
+          }, 600);
+        }
+      });
+    });
+  </script>
+  
+  <style>
+    @keyframes sparkle {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+    
+    /* 让内容区域可点击 */
+    .page-content {
+      cursor: pointer;
+    }
+    
+    /* 美化代码块 */
+    pre, code {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    
+    /* 美化链接 */
+    a {
+      color: #667eea;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    a:hover {
+      color: #764ba2;
+      text-shadow: 0 0 5px rgba(118, 75, 162, 0.5);
+    }
+  </style>
 </body>
 </html>
