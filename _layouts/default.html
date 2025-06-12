@@ -313,13 +313,40 @@
       cursor: default;
     }
     
-    /* 美化代码块 */
+    /* 美化代码块 - 简洁风格 */
      pre, code {
-       background: rgba(0, 0, 0, 0.15);
-       border-radius: 8px;
-       padding: 10px;
-       margin: 10px 0;
-       color: rgba(255, 255, 255, 0.9);
+       background: transparent !important;
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-radius: 6px;
+       padding: 8px 12px;
+       margin: 8px 0;
+       color: rgba(255, 255, 255, 0.95);
+       box-shadow: none !important;
+       backdrop-filter: blur(5px);
+     }
+     
+     /* 行内代码样式 */
+     code {
+       padding: 2px 6px;
+       margin: 0 2px;
+       font-size: 0.9em;
+       background: rgba(255, 255, 255, 0.1) !important;
+     }
+     
+     /* 代码块容器 */
+     pre {
+       overflow-x: auto;
+       white-space: pre-wrap;
+       word-wrap: break-word;
+     }
+     
+     /* 代码块内的代码元素 */
+     pre code {
+       background: transparent !important;
+       padding: 0;
+       margin: 0;
+       border: none;
+       font-size: inherit;
      }
      
      /* 美化文章内容 */
