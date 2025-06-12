@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% seo %}
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+  <!-- Prism.js 代码高亮样式 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <!-- 若需 favicon：
   <link rel="shortcut icon" href="{{ '/favicon.ico' | relative_url }}">
   -->
@@ -223,6 +225,9 @@
     });
   </script>
   
+  <!-- Prism.js 代码高亮脚本 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  
   <style>
     /* 全屏装饰元素容器 */
     .top-decorations {
@@ -313,9 +318,45 @@
       cursor: default;
     }
     
-    /* 美化代码块 - 简洁风格 */
-     pre, code {
+    /* 美化代码块 - 简洁风格，兼容Prism.js */
+     pre[class*="language-"], code[class*="language-"] {
        background: transparent !important;
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-radius: 6px;
+       color: rgba(255, 255, 255, 0.95) !important;
+       box-shadow: none !important;
+       backdrop-filter: blur(5px);
+       font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+     }
+     
+     /* 代码块容器 */
+     pre[class*="language-"] {
+       padding: 12px 16px;
+       margin: 12px 0;
+       overflow-x: auto;
+       white-space: pre;
+       word-wrap: normal;
+       /* 确保用户可以选择和复制代码 */
+       user-select: text;
+       -webkit-user-select: text;
+       -moz-user-select: text;
+       -ms-user-select: text;
+       pointer-events: auto;
+     }
+     
+     /* 行内代码样式 */
+     :not(pre) > code[class*="language-"] {
+       padding: 2px 6px;
+       margin: 0 2px;
+       font-size: 0.9em;
+       background: rgba(255, 255, 255, 0.1) !important;
+       border-radius: 4px;
+       white-space: normal;
+     }
+     
+     /* 普通代码块（无语言类的fallback） */
+     pre:not([class*="language-"]), code:not([class*="language-"]) {
+       background: rgba(255, 255, 255, 0.1) !important;
        border: 1px solid rgba(255, 255, 255, 0.2);
        border-radius: 6px;
        padding: 8px 12px;
@@ -323,30 +364,15 @@
        color: rgba(255, 255, 255, 0.95);
        box-shadow: none !important;
        backdrop-filter: blur(5px);
+       font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+       user-select: text;
+       pointer-events: auto;
      }
      
-     /* 行内代码样式 */
-     code {
-       padding: 2px 6px;
-       margin: 0 2px;
-       font-size: 0.9em;
-       background: rgba(255, 255, 255, 0.1) !important;
-     }
-     
-     /* 代码块容器 */
-     pre {
-       overflow-x: auto;
-       white-space: pre-wrap;
-       word-wrap: break-word;
-     }
-     
-     /* 代码块内的代码元素 */
-     pre code {
-       background: transparent !important;
-       padding: 0;
-       margin: 0;
-       border: none;
-       font-size: inherit;
+     /* 确保代码块内容可以被正常选择 */
+     .post-content pre, .post-content code {
+       pointer-events: auto !important;
+       user-select: text !important;
      }
      
      /* 美化文章内容 */
