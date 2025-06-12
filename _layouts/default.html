@@ -201,27 +201,19 @@
         container.appendChild(cloud);
       }
       
-      // 创建彗星元素 - 右上往下坠落，增加数量和拖尾效果
-      const cometCount = isPostPage ? 3 : 5; // 文章页面3个，首页5个
-      for (let i = 0; i < cometCount; i++) {
-        const comet = document.createElement('div');
-        comet.className = 'fullscreen-comet';
-        comet.innerHTML = '☄️';
-        // 从右上角开始
-        comet.style.right = Math.random() * 20 + '%';
-        comet.style.top = Math.random() * 20 + '%';
-        comet.style.animationDelay = Math.random() * 8 + 's';
-        comet.style.animationDuration = (6 + Math.random() * 4) + 's';
-        container.appendChild(comet);
-        
-        // 添加拖尾效果
-        const trail = document.createElement('div');
-        trail.className = 'comet-trail';
-        trail.style.right = Math.random() * 20 + '%';
-        trail.style.top = Math.random() * 20 + '%';
-        trail.style.animationDelay = comet.style.animationDelay;
-        trail.style.animationDuration = comet.style.animationDuration;
-        container.appendChild(trail);
+      // 创建拖尾效果 - 仅在首页显示，从顶部任意位置下降
+      if (!isPostPage) {
+        const trailCount = 8; // 增加拖尾数量
+        for (let i = 0; i < trailCount; i++) {
+          const trail = document.createElement('div');
+          trail.className = 'comet-trail';
+          // 从顶部任意位置开始
+          trail.style.left = Math.random() * 100 + '%';
+          trail.style.top = Math.random() * 10 + '%';
+          trail.style.animationDelay = Math.random() * 12 + 's';
+          trail.style.animationDuration = (8 + Math.random() * 6) + 's';
+          container.appendChild(trail);
+        }
       }
     }
     
@@ -308,25 +300,16 @@
        opacity: 0.7;
      }
      
-     /* 全屏彗星样式 */
-     .fullscreen-comet {
-       position: absolute;
-       font-size: 18px;
-       animation: fullscreenFall 8s ease-in infinite;
-       opacity: 0.9;
-       filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
-     }
-     
-     /* 彗星拖尾效果 */
+     /* 拖尾效果 */
      .comet-trail {
        position: absolute;
        width: 3px;
        height: 30px;
-       background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+       background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.8), transparent);
        border-radius: 50%;
-       animation: fullscreenFall 8s ease-in infinite;
+       animation: trailFall 10s ease-in infinite;
        opacity: 0.6;
-       transform-origin: top right;
+       transform-origin: top center;
      }
     
     /* 全屏装饰动画 */
@@ -350,19 +333,19 @@
        100% { transform: translateX(calc(100vw + 50px)) scale(0.8); }
      }
      
-     @keyframes fullscreenFall {
+     @keyframes trailFall {
        0% { 
-         transform: translateX(0) translateY(-50px) rotate(45deg); 
+         transform: translateY(-50px); 
          opacity: 0; 
        }
        10% { 
-         opacity: 1; 
+         opacity: 0.6; 
        }
        90% { 
-         opacity: 0.8; 
+         opacity: 0.4; 
        }
        100% { 
-         transform: translateX(-80vw) translateY(calc(100vh + 50px)) rotate(45deg); 
+         transform: translateY(calc(100vh + 50px)); 
          opacity: 0; 
        }
      }
