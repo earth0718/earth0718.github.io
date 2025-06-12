@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: 'zh-CN' }}">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% seo %}
-  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>我的博客首页 | Earth_zZ</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="我的博客首页" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="初学者的博客" />
+<meta property="og:description" content="初学者的博客" />
+<link rel="canonical" href="http://localhost:4000/" />
+<meta property="og:url" content="http://localhost:4000/" />
+<meta property="og:site_name" content="Earth_zZ" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="我的博客首页" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","description":"初学者的博客","headline":"我的博客首页","name":"Earth_zZ","url":"http://localhost:4000/"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <link rel="stylesheet" href="/assets/css/main.css">
   <!-- Prism.js 代码高亮样式 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <!-- 若需 favicon：
-  <link rel="shortcut icon" href="{{ '/favicon.ico' | relative_url }}">
+  <link rel="shortcut icon" href="/favicon.ico">
   -->
 </head>
 <body>
@@ -19,8 +35,8 @@
   <div class="particles-container" id="particles-container"></div>
   <header class="site-header">
     <div class="wrapper">
-      <a class="site-title" rel="author" href="{{ '/' | relative_url }}">
-        {{ site.title | escape }}
+      <a class="site-title" rel="author" href="/">
+        Earth_zZ
       </a>
       <!-- 这里可以放头像或导航 -->
     </div>
@@ -28,17 +44,42 @@
 
   <main class="page-content" aria-label="Content">
     <div class="wrapper">
-      {{ content }}
+      <!-- 显示头像 -->
+<p><img src="/assets/images/picture.jpg" alt="avatar" style="width: 120px; border-radius: 50%; margin-bottom: 20px;" /></p>
+
+<h1 id="欢迎来到我的博客">欢迎来到我的博客！</h1>
+
+<p>这里是一些最新的文章：</p>
+
+<ul>
+  
+    <li>
+      <a href="/2025/05/13/my-two.html">语音识别</a>
+      <span> - 2025-05-13</span>
+    </li>
+  
+    <li>
+      <a href="/2025/04/30/my-one.html">如何在本地部署DiFy</a>
+      <span> - 2025-04-30</span>
+    </li>
+  
+    <li>
+      <a href="/2025/04/22/my-first.html">梦开始的地方</a>
+      <span> - 2025-04-22</span>
+    </li>
+  
+</ul>
+
+<!-- 你也可以在这里添加其他你想在首页显示的内容 -->
+
     </div>
 
-    {% comment %}
-      评论区功能已从此移除
-    {% endcomment %}
+    
   </main>
 
   <footer class="site-footer">
     <div class="wrapper">
-      <p>© {{ 'now' | date: '%Y' }} {{ site.title | escape }}. {{ site.description | escape }}</p>
+      <p>© 2025 Earth_zZ. 初学者的博客</p>
     </div>
   </footer>
 

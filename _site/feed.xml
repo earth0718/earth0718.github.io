@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-06-12T14:34:07+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Earth_zZ</title><subtitle>初学者的博客</subtitle><entry><title type="html">语音识别</title><link href="http://localhost:4000/2025/05/13/my-two.html" rel="alternate" type="text/html" title="语音识别" /><published>2025-05-13T00:00:00+08:00</published><updated>2025-05-13T00:00:00+08:00</updated><id>http://localhost:4000/2025/05/13/my-two</id><content type="html" xml:base="http://localhost:4000/2025/05/13/my-two.html"><![CDATA[<p>通过腾讯云SDK实现语音识别功能，支持流式输出和客户端麦克风调用，以下是详细的实现流程：</p>
+
+<h2 id="一准备环境">一、准备环境</h2>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">确保你的开发环境已经安装：</span>
+<span class="err">1.Python</span> <span class="err">3.6+</span>
+<span class="err">2.腾讯云SDK</span>
+<span class="err">3.PyAudio（用于麦克风录音）</span>
+<span class="err">4.腾讯云账号和API密钥</span>
+</code></pre></div></div>
+
+<p>可以采用以下命令安装依赖：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>tencentcloud-sdk-python
+pip <span class="nb">install </span>pyaudio
+pip <span class="nb">install </span>websocket-client
+</code></pre></div></div>
+
+<h2 id="二获取腾讯云api密钥">二、获取腾讯云API密钥</h2>
+
+<p>登录腾讯云控制台，获取以下信息：</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">1.SecretId</span>
+<span class="err">2.SecretKey</span>
+<span class="err">3.AppId（语音识别应用ID）</span>
+</code></pre></div></div>
+
+<p>在腾讯云控制台 &gt; 访问管理 &gt; API密钥管理中创建密钥。</p>
+
+<h2 id="三配置环境变量">三、配置环境变量</h2>
+
+<p>为了安全起见，建议将密钥信息配置为环境变量：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Windows</span>
+<span class="nb">set </span><span class="nv">TENCENT_SECRET_ID</span><span class="o">=</span>your_secret_id
+<span class="nb">set </span><span class="nv">TENCENT_SECRET_KEY</span><span class="o">=</span>your_secret_key
+<span class="nb">set </span><span class="nv">TENCENT_APP_ID</span><span class="o">=</span>your_app_id
+
+<span class="c"># Linux/Mac</span>
+<span class="nb">export </span><span class="nv">TENCENT_SECRET_ID</span><span class="o">=</span>your_secret_id
+<span class="nb">export </span><span class="nv">TENCENT_SECRET_KEY</span><span class="o">=</span>your_secret_key
+<span class="nb">export </span><span class="nv">TENCENT_APP_ID</span><span class="o">=</span>your_app_id
+</code></pre></div></div>
+
+<h2 id="四实现语音识别代码">四、实现语音识别代码</h2>
+
+<h3 id="41-基础配置">4.1 基础配置</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">import</span> <span class="n">json</span>
+<span class="kn">import</span> <span class="n">time</span>
+<span class="kn">import</span> <span class="n">pyaudio</span>
+<span class="kn">import</span> <span class="n">threading</span>
+<span class="kn">from</span> <span class="n">tencentcloud.common</span> <span class="kn">import</span> <span class="n">credential</span>
+<span class="kn">from</span> <span class="n">tencentcloud.common.profile.client_profile</span> <span class="kn">import</span> <span class="n">ClientProfile</span>
+<span class="kn">from</span> <span class="n">tencentcloud.common.profile.http_profile</span> <span class="kn">import</span> <span class="n">HttpProfile</span>
+<span class="kn">from</span> <span class="n">tencentcloud.asr.v20190614</span> <span class="kn">import</span> <span class="n">asr_client</span><span class="p">,</span> <span class="n">models</span>
+
+<span class="c1"># 配置信息
+</span><span class="n">SECRET_ID</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">'</span><span class="s">TENCENT_SECRET_ID</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">'</span><span class="s">TENCENT_SECRET_KEY</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">APP_ID</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">'</span><span class="s">TENCENT_APP_ID</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">REGION</span> <span class="o">=</span> <span class="sh">"</span><span class="s">ap-beijing</span><span class="sh">"</span>  <span class="c1"># 根据需要选择地域
+</span>
+<span class="c1"># 音频参数
+</span><span class="n">CHUNK</span> <span class="o">=</span> <span class="mi">1024</span>
+<span class="n">FORMAT</span> <span class="o">=</span> <span class="n">pyaudio</span><span class="p">.</span><span class="n">paInt16</span>
+<span class="n">CHANNELS</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">RATE</span> <span class="o">=</span> <span class="mi">16000</span>
+</code></pre></div></div>
+
+<h3 id="42-实时语音识别类">4.2 实时语音识别类</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">RealTimeASR</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">cred</span> <span class="o">=</span> <span class="n">credential</span><span class="p">.</span><span class="nc">Credential</span><span class="p">(</span><span class="n">SECRET_ID</span><span class="p">,</span> <span class="n">SECRET_KEY</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">httpProfile</span> <span class="o">=</span> <span class="nc">HttpProfile</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">httpProfile</span><span class="p">.</span><span class="n">endpoint</span> <span class="o">=</span> <span class="sh">"</span><span class="s">asr.tencentcloudapi.com</span><span class="sh">"</span>
+        
+        <span class="n">self</span><span class="p">.</span><span class="n">clientProfile</span> <span class="o">=</span> <span class="nc">ClientProfile</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">clientProfile</span><span class="p">.</span><span class="n">httpProfile</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">httpProfile</span>
+        
+        <span class="n">self</span><span class="p">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">asr_client</span><span class="p">.</span><span class="nc">AsrClient</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">cred</span><span class="p">,</span> <span class="n">REGION</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">clientProfile</span><span class="p">)</span>
+        
+        <span class="n">self</span><span class="p">.</span><span class="n">audio</span> <span class="o">=</span> <span class="n">pyaudio</span><span class="p">.</span><span class="nc">PyAudio</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">stream</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">is_recording</span> <span class="o">=</span> <span class="bp">False</span>
+        
+    <span class="k">def</span> <span class="nf">start_recording</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">开始录音</span><span class="sh">"""</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">audio</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span>
+            <span class="nb">format</span><span class="o">=</span><span class="n">FORMAT</span><span class="p">,</span>
+            <span class="n">channels</span><span class="o">=</span><span class="n">CHANNELS</span><span class="p">,</span>
+            <span class="n">rate</span><span class="o">=</span><span class="n">RATE</span><span class="p">,</span>
+            <span class="nb">input</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">frames_per_buffer</span><span class="o">=</span><span class="n">CHUNK</span>
+        <span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">is_recording</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">开始录音...</span><span class="sh">"</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">stop_recording</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">停止录音</span><span class="sh">"""</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">is_recording</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">stream</span><span class="p">:</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">stream</span><span class="p">.</span><span class="nf">stop_stream</span><span class="p">()</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">stream</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">录音结束</span><span class="sh">"</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">recognize_stream</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">流式语音识别</span><span class="sh">"""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">stream</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">请先开始录音</span><span class="sh">"</span><span class="p">)</span>
+            <span class="k">return</span>
+            
+        <span class="n">audio_data</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">while</span> <span class="n">self</span><span class="p">.</span><span class="n">is_recording</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">stream</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">CHUNK</span><span class="p">,</span> <span class="n">exception_on_overflow</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="n">audio_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                
+                <span class="c1"># 每收集一定量的音频数据就进行一次识别
+</span>                <span class="k">if</span> <span class="nf">len</span><span class="p">(</span><span class="n">audio_data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>  <span class="c1"># 约0.64秒的音频
+</span>                    <span class="n">audio_bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="sh">''</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">audio_data</span><span class="p">)</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">_recognize_audio</span><span class="p">(</span><span class="n">audio_bytes</span><span class="p">)</span>
+                    
+                    <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">callback</span><span class="p">:</span>
+                        <span class="nf">callback</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                    
+                    <span class="n">audio_data</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 清空缓存
+</span>                    
+            <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">录音错误: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+                <span class="k">break</span>
+                
+    <span class="k">def</span> <span class="nf">_recognize_audio</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">audio_data</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">调用腾讯云API进行语音识别</span><span class="sh">"""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">req</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="nc">CreateRecTaskRequest</span><span class="p">()</span>
+            <span class="n">req</span><span class="p">.</span><span class="n">EngineModelType</span> <span class="o">=</span> <span class="sh">"</span><span class="s">16k_zh</span><span class="sh">"</span>  <span class="c1"># 中文普通话
+</span>            <span class="n">req</span><span class="p">.</span><span class="n">ChannelNum</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">req</span><span class="p">.</span><span class="n">ResTextFormat</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">req</span><span class="p">.</span><span class="n">SourceType</span> <span class="o">=</span> <span class="mi">1</span>
+            
+            <span class="c1"># 将音频数据转换为base64
+</span>            <span class="kn">import</span> <span class="n">base64</span>
+            <span class="n">audio_base64</span> <span class="o">=</span> <span class="n">base64</span><span class="p">.</span><span class="nf">b64encode</span><span class="p">(</span><span class="n">audio_data</span><span class="p">).</span><span class="nf">decode</span><span class="p">(</span><span class="sh">'</span><span class="s">utf-8</span><span class="sh">'</span><span class="p">)</span>
+            <span class="n">req</span><span class="p">.</span><span class="n">Data</span> <span class="o">=</span> <span class="n">audio_base64</span>
+            
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="nc">CreateRecTask</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+            
+            <span class="c1"># 获取任务ID
+</span>            <span class="n">task_id</span> <span class="o">=</span> <span class="n">resp</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">TaskId</span>
+            
+            <span class="c1"># 轮询获取结果
+</span>            <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="nf">_get_recognition_result</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+            
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">识别错误: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+            
+    <span class="k">def</span> <span class="nf">_get_recognition_result</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">获取识别结果</span><span class="sh">"""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">req</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="nc">DescribeTaskStatusRequest</span><span class="p">()</span>
+            <span class="n">req</span><span class="p">.</span><span class="n">TaskId</span> <span class="o">=</span> <span class="n">task_id</span>
+            
+            <span class="c1"># 轮询等待结果
+</span>            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>  <span class="c1"># 最多等待30秒
+</span>                <span class="n">resp</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="nc">DescribeTaskStatus</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">resp</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">StatusStr</span> <span class="o">==</span> <span class="sh">"</span><span class="s">success</span><span class="sh">"</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">resp</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">Result</span>
+                <span class="k">elif</span> <span class="n">resp</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">StatusStr</span> <span class="o">==</span> <span class="sh">"</span><span class="s">failed</span><span class="sh">"</span><span class="p">:</span>
+                    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">识别失败</span><span class="sh">"</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">None</span>
+                    
+                <span class="n">time</span><span class="p">.</span><span class="nf">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 等待1秒后重试
+</span>                
+            <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">识别超时</span><span class="sh">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+            
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">获取结果错误: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<h2 id="五使用示例">五、使用示例</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">on_recognition_result</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">识别结果回调函数</span><span class="sh">"""</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">识别结果: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># 创建语音识别实例
+</span>    <span class="n">asr</span> <span class="o">=</span> <span class="nc">RealTimeASR</span><span class="p">()</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 开始录音
+</span>        <span class="n">asr</span><span class="p">.</span><span class="nf">start_recording</span><span class="p">()</span>
+        
+        <span class="c1"># 创建识别线程
+</span>        <span class="n">recognition_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="nc">Thread</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">asr</span><span class="p">.</span><span class="n">recognize_stream</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">on_recognition_result</span><span class="p">,)</span>
+        <span class="p">)</span>
+        <span class="n">recognition_thread</span><span class="p">.</span><span class="nf">start</span><span class="p">()</span>
+        
+        <span class="c1"># 等待用户输入停止
+</span>        <span class="nf">input</span><span class="p">(</span><span class="sh">"</span><span class="s">按回车键停止录音...</span><span class="sh">"</span><span class="p">)</span>
+        
+    <span class="k">except</span> <span class="nb">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">用户中断</span><span class="sh">"</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># 停止录音
+</span>        <span class="n">asr</span><span class="p">.</span><span class="nf">stop_recording</span><span class="p">()</span>
+        
+        <span class="c1"># 等待识别线程结束
+</span>        <span class="k">if</span> <span class="sh">'</span><span class="s">recognition_thread</span><span class="sh">'</span> <span class="ow">in</span> <span class="nf">locals</span><span class="p">():</span>
+            <span class="n">recognition_thread</span><span class="p">.</span><span class="nf">join</span><span class="p">()</span>
+            
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="sh">"</span><span class="s">__main__</span><span class="sh">"</span><span class="p">:</span>
+    <span class="nf">main</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="六优化建议">六、优化建议</h2>
+
+<h3 id="61-错误处理">6.1 错误处理</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 添加更完善的错误处理
+</span><span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 语音识别代码
+</span>    <span class="k">pass</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">发生错误: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+    <span class="c1"># 记录日志或进行其他处理
+</span></code></pre></div></div>
+
+<h3 id="62-性能优化">6.2 性能优化</h3>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">1.调整音频缓存大小，平衡实时性和准确性</span>
+<span class="err">2.使用异步处理提高响应速度</span>
+<span class="err">3.添加音频质量检测，过滤噪音</span>
+<span class="err">4.实现断线重连机制</span>
+</code></pre></div></div>
+
+<h3 id="63-功能扩展">6.3 功能扩展</h3>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">1.支持多语言识别</span>
+<span class="err">2.添加语音端点检测</span>
+<span class="err">3.实现语音转文字的实时显示</span>
+<span class="err">4.支持音频文件批量处理</span>
+</code></pre></div></div>
+
+<h2 id="七注意事项">七、注意事项</h2>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">1.确保网络连接稳定，语音识别需要实时网络请求</span>
+<span class="err">2.注意API调用频率限制，避免超出配额</span>
+<span class="err">3.音频质量会直接影响识别准确率</span>
+<span class="err">4.妥善保管API密钥，避免泄露</span>
+<span class="err">5.根据实际需求选择合适的识别引擎模型</span>
+</code></pre></div></div>
+
+<p>通过以上步骤，你就可以成功实现基于腾讯云SDK的实时语音识别功能了！</p>
+
+<p>如果在使用过程中遇到问题，可以查看腾讯云官方文档或者在评论区留言交流。</p>]]></content><author><name></name></author><summary type="html"><![CDATA[通过腾讯云SDK实现语音识别功能，支持流式输出和客户端麦克风调用，以下是详细的实现流程：]]></summary></entry><entry><title type="html">如何在本地部署DiFy</title><link href="http://localhost:4000/2025/04/30/my-one.html" rel="alternate" type="text/html" title="如何在本地部署DiFy" /><published>2025-04-30T00:00:00+08:00</published><updated>2025-04-30T00:00:00+08:00</updated><id>http://localhost:4000/2025/04/30/my-one</id><content type="html" xml:base="http://localhost:4000/2025/04/30/my-one.html"><![CDATA[<p>在本地部署DiFy可以通过Docker快捷搭建，以下是部署流程：</p>
+
+<h2 id="一准备环境">一、准备环境</h2>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">确保你的本地已经安装：</span>
+<span class="err">1.Docker</span>
+<span class="err">2.Docker</span> <span class="err">Compose</span>
+<span class="err">3.Git</span>
+</code></pre></div></div>
+
+<p>可以采用以下命令查看</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nt">-v</span>
+docker compose version
+git <span class="nt">--version</span>
+</code></pre></div></div>
+
+<h2 id="二拉取dify源码">二、拉取DiFy源码</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/langgenius/dify.git
+<span class="nb">cd </span>dify/docker
+</code></pre></div></div>
+
+<h2 id="三配置环境变量">三、配置环境变量</h2>
+
+<p>在根目录下复制 <code class="language-plaintext highlighter-rouge">.env.example</code> 为 <code class="language-plaintext highlighter-rouge">.env</code>：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># mac或者Linux</span>
+<span class="nb">cp</span> .env.example .env
+<span class="c"># windows</span>
+copy .env.example .env
+</code></pre></div></div>
+
+<h2 id="四使用-docker-compose-启动服务">四、使用 Docker Compose 启动服务</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker compose up <span class="nt">-d</span>
+</code></pre></div></div>
+
+<p>这会启动以下服务：</p>
+
+<ul>
+  <li>Web 应用前端（<code class="language-plaintext highlighter-rouge">web</code>）</li>
+  <li>后端服务（<code class="language-plaintext highlighter-rouge">api</code>）</li>
+  <li>向量数据库（默认是 <code class="language-plaintext highlighter-rouge">qdrant</code>）</li>
+  <li>Redis</li>
+  <li>PostgreSQL</li>
+</ul>
+
+<h2 id="五访问本地服务">五、访问本地服务</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost:3000
+</code></pre></div></div>
+
+<p>默认访问地址，如果不正确的话，在<code class="language-plaintext highlighter-rouge">dify/docker</code>中有一个<code class="language-plaintext highlighter-rouge">docker-compose.yml</code>文件。可以通过这个文件查看端口。</p>
+
+<h2 id="六设置公网地址可选">六、设置公网地址（可选）</h2>
+
+<p>利用<code class="language-plaintext highlighter-rouge">ngrok</code>可以将<code class="language-plaintext highlighter-rouge">dify</code>在公网公开，否则的话，只能本地连接。</p>
+
+<p>但是<code class="language-plaintext highlighter-rouge">ngrok</code>每次启动一次，网址就会变，<strong>只建议临时使用</strong>。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 如果dify在你电脑的端口是80</span>
+ngrok http 80
+</code></pre></div></div>
+
+<p>这样你就会得到一个可以允许任何网络连接的网址。</p>]]></content><author><name></name></author><summary type="html"><![CDATA[在本地部署DiFy可以通过Docker快捷搭建，以下是部署流程：]]></summary></entry><entry><title type="html">梦开始的地方</title><link href="http://localhost:4000/2025/04/22/my-first.html" rel="alternate" type="text/html" title="梦开始的地方" /><published>2025-04-22T00:00:00+08:00</published><updated>2025-04-22T00:00:00+08:00</updated><id>http://localhost:4000/2025/04/22/my-first</id><content type="html" xml:base="http://localhost:4000/2025/04/22/my-first.html"><![CDATA[<h2 id="欢迎">欢迎</h2>
+
+<p>欢迎访问我的博客<br /></p>
+
+<p>梦开始的地方 🌙  <br />
+欢迎你来到我的博客！<br /></p>
+
+<p>这是我在 GitHub 上搭建的第一个博客，一个属于我自己的小角落，也是一个我记录思考、分享生活、交流想法的地方。<br /></p>
+
+<p>“梦开始的地方”，这个标题不只是写给自己，也是写给每一个愿意停下来看一看的你。<br />
+在这里，我会分享我正在学的、正在做的、正在想的：<br />
+无论是代码、技术、产品设计，还是生活中的小确幸、午夜的灵感碎片。<br /></p>
+
+<p>当然，也会时不时夹带一点小小的私货～<br />
+比如我很喜欢的偶像 佳佳子_zZ，她用她的真诚与善良，带给我很多灵感和快乐；<br />
+大家如果想要了解她，可以去佳人制作的ijia学院，那里有她的足迹（ijiazz.cn）;<br />
+如果你也感兴趣，欢迎一起到“ijia学院”学习！<br /></p>
+
+<p>希望它不仅仅是我的梦开始的地方，也可以成为你灵感闪现、想法碰撞的起点。<br /></p>
+
+<p>如果你愿意，欢迎你留言、交流，甚至加入这个梦想的旅程。<br /></p>]]></content><author><name></name></author><summary type="html"><![CDATA[欢迎]]></summary></entry></feed>
