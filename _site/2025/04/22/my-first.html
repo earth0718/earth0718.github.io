@@ -23,6 +23,8 @@
 <!-- End Jekyll SEO tag -->
 
   <link rel="stylesheet" href="/assets/css/main.css">
+  <!-- 评论系统样式 -->
+  <link rel="stylesheet" href="/assets/css/comments.css">
   <!-- Prism.js 代码高亮样式 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <!-- 装饰效果脚本 -->
@@ -71,7 +73,20 @@
 
     </div>
 
+    <!-- 自定义评论系统开始 -->
     
+    <div class="comments-container">
+      <!-- 评论系统容器，JavaScript会在这里渲染评论表单和列表 -->
+      <div 
+        id="comments-container" 
+        data-page-id="/2025/04/22/my-first.html"
+        data-api-url="http://localhost:5000/api"
+      >
+        <!-- 评论内容将通过JavaScript动态加载 -->
+      </div>
+    </div>
+    
+    <!-- 自定义评论系统结束 -->
   </main>
 
   <footer class="site-footer">
@@ -92,6 +107,9 @@
   
   <!-- Prism.js 代码高亮脚本 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  
+  <!-- 评论系统脚本 -->
+  <script src="/assets/js/comments.js" defer></script>
   
   <style>
     /* 全屏装饰元素容器 */

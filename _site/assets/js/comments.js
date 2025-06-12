@@ -169,7 +169,7 @@ class CommentSystem {
     // 设置加载状态
     this.isLoading = true;
     submitBtn.disabled = true;
-    const btnText = submitBtn.querySelector('.btn-text');
+    // const btnText = submitBtn.querySelector('.btn-text'); // 删除此行
     btnText.style.display = 'none';
     btnLoading.style.display = 'inline';
     

@@ -192,9 +192,15 @@
 }
 
 .comment-author {
-  color: #64b5f6;
-  font-weight: 600;
-  font-size: 0.95rem;
+  color: #64b5f6; /* 保持或调整颜色 */
+  font-weight: 600; /* 保持或调整字重 */
+  font-size: 0.95rem; /* 保持或调整字号 */
+  /* 模仿代码高亮的背景和边框 */
+  background: rgba(255, 255, 255, 0.05); /* 轻微背景色 */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* 轻微边框 */
+  padding: 2px 6px; /* 添加内边距 */
+  border-radius: 4px; /* 圆角 */
+  display: inline-block; /* 使 padding 生效 */
 }
 
 .comment-date {
@@ -203,9 +209,17 @@
 }
 
 .comment-content {
-  color: #e0e0e0;
+  color: #000000; /* 将颜色修改为黑色 */
   line-height: 1.6;
   font-size: 0.95rem;
+  /* 模仿代码高亮的背景和边框 */
+  background: rgba(255, 255, 255, 0.03); /* 更轻微的背景色 */
+  border: 1px solid rgba(255, 255, 255, 0.08); /* 更轻微的边框 */
+  padding: 8px 12px; /* 添加内边距 */
+  border-radius: 6px; /* 圆角 */
+  margin-top: 0.5rem; /* 与用户名隔开一些距离 */
+  text-shadow: 0 0 3px rgba(224, 224, 224, 0.3); /* 添加文本阴影以产生高亮效果 */
+}
   word-wrap: break-word;
 }
 

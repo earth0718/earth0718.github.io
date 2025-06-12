@@ -36,6 +36,7 @@
     </div>
 
     <!-- 自定义评论系统开始 -->
+    {% if page.url != "/" %}
     <div class="comments-container">
       <!-- 评论系统容器，JavaScript会在这里渲染评论表单和列表 -->
       <div 
@@ -46,6 +47,7 @@
         <!-- 评论内容将通过JavaScript动态加载 -->
       </div>
     </div>
+    {% endif %}
     <!-- 自定义评论系统结束 -->
   </main>
 
