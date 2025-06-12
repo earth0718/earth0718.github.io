@@ -33,6 +33,15 @@ body {
   animation: explode 1s ease-out forwards;
 }
 
+/* 星星粒子爆炸效果 */
+.star-particle {
+  position: absolute;
+  pointer-events: none;
+  animation: starExplode 1s ease-out forwards;
+  font-weight: bold;
+  user-select: none;
+}
+
 @keyframes explode {
   0% {
     transform: scale(0) translate(0, 0);
@@ -41,6 +50,259 @@ body {
   100% {
     transform: scale(1) translate(var(--dx), var(--dy));
     opacity: 0;
+  }
+}
+
+@keyframes starExplode {
+  0% {
+    transform: scale(0) translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) translate(calc(var(--dx) * 0.5), calc(var(--dy) * 0.5)) rotate(calc(var(--rotation) * 0.5));
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0.8) translate(var(--dx), var(--dy)) rotate(var(--rotation));
+    opacity: 0;
+  }
+}
+
+/* 全屏装饰元素容器 */
+.top-decorations {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* 全屏月亮样式 */
+.fullscreen-moon {
+  position: absolute;
+  font-size: 24px;
+  animation: fullscreenFloat 8s ease-in-out infinite;
+  opacity: 0.9;
+}
+
+/* 全屏星星样式 */
+.fullscreen-star {
+  position: absolute;
+  font-size: 16px;
+  animation: fullscreenTwinkle 3s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+/* 全屏云朵样式 */
+.fullscreen-cloud {
+  position: absolute;
+  font-size: 20px;
+  animation: fullscreenDrift 25s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+/* 拖尾效果 */
+.comet-trail {
+  position: absolute;
+  width: 3px;
+  height: 30px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  border-radius: 50%;
+  animation: trailFall 10s ease-in infinite;
+  opacity: 0.6;
+  transform-origin: top center;
+}
+
+/* 全屏装饰动画 */
+@keyframes fullscreenFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-15px) rotate(5deg); }
+  50% { transform: translateY(-10px) rotate(-3deg); }
+  75% { transform: translateY(-20px) rotate(3deg); }
+}
+
+@keyframes fullscreenTwinkle {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes fullscreenDrift {
+  0% { transform: translateX(-50px) scale(0.8); }
+  25% { transform: translateX(25vw) scale(1.1); }
+  50% { transform: translateX(50vw) scale(0.9); }
+  75% { transform: translateX(75vw) scale(1.2); }
+  100% { transform: translateX(calc(100vw + 50px)) scale(0.8); }
+}
+
+@keyframes trailFall {
+  0% { 
+    transform: translateY(-50px); 
+    opacity: 0; 
+  }
+  10% { 
+    opacity: 0.6; 
+  }
+  90% { 
+    opacity: 0.4; 
+  }
+  100% { 
+    transform: translateY(calc(100vh + 50px)); 
+    opacity: 0; 
+  }
+}
+
+@keyframes sparkle {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* 让内容区域可点击 */
+.page-content {
+  cursor: default;
+}
+
+/* 美化代码块 - 简洁风格，兼容Prism.js */
+pre[class*="language-"], code[class*="language-"] {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(5px);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* 代码块容器 */
+pre[class*="language-"] {
+  padding: 12px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  white-space: pre;
+  word-wrap: normal;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  pointer-events: auto;
+}
+
+/* 行内代码样式 */
+:not(pre) > code[class*="language-"] {
+  padding: 2px 6px;
+  margin: 0 2px;
+  font-size: 0.9em;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px;
+  white-space: normal;
+}
+
+/* 普通代码块（无语言类的fallback） */
+pre:not([class*="language-"]), code:not([class*="language-"]) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: none !important;
+  backdrop-filter: blur(5px);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  user-select: text;
+  pointer-events: auto;
+}
+
+/* 确保代码块内容可以被正常选择 */
+.post-content pre, .post-content code {
+  pointer-events: auto !important;
+  user-select: text !important;
+}
+
+/* 美化文章内容 */
+.post-content h1, .post-content h2, .post-content h3 {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.post-content p, .post-content li {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* 美化链接 */
+a {
+  color: #667eea;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+a:hover {
+  color: #764ba2;
+  text-shadow: 0 0 5px rgba(118, 75, 162, 0.5);
+}
+
+/* 移动端适配 - 减少特效元素 */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 1rem;
+    margin: 0;
+  }
+  
+  pre[class*="language-"],
+  code[class*="language-"] {
+    font-size: 0.8rem;
+  }
+  
+  /* 移动端装饰元素优化 */
+  .fullscreen-moon,
+  .fullscreen-star {
+    font-size: 1rem !important;
+    opacity: 0.6;
+  }
+  
+  .fullscreen-cloud,
+  .comet-trail {
+    display: none;
+  }
+  
+  .floating-particle {
+    opacity: 0.4;
+  }
+  
+  /* 减少动画强度 */
+  .fullscreen-moon,
+  .fullscreen-star,
+  .floating-particle {
+    animation-duration: 8s !important;
+  }
+  
+  .star-particle {
+    animation-duration: 0.8s;
+  }
+}
+
+/* 可访问性改进 */
+.fullscreen-moon, .fullscreen-star, .fullscreen-cloud, .comet-trail, .star-particle {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* 夜间模式支持 */
+@media (prefers-color-scheme: dark) {
+  .fullscreen-moon, .fullscreen-star {
+    opacity: 0.6;
   }
 }
 

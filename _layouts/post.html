@@ -17,12 +17,21 @@ layout: post
 
 </article>
 
-<!-- Hyvor Talk 评论区开始 (Web Component) -->
-<div class="mt-8"> <!-- 保留了你原来 Waline div 的 class，如果不需要可以移除 -->
-  <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
-  <hyvor-talk-comments
-      website-id="13109"  <!-- 这里是你的 Hyvor Talk Website ID -->
-      page-id="{{ page.url | relative_url }}" <!-- 使用页面的相对路径作为唯一 ID -->
-  ></hyvor-talk-comments>
+<!-- 自定义评论系统开始 -->
+<div class="comments-container">
+  <!-- 评论系统容器，JavaScript会在这里渲染评论表单和列表 -->
+  <div 
+    id="comments-container" 
+    data-page-id="{{ page.url | relative_url }}"
+    data-api-url="http://localhost:5000/api"
+  >
+    <!-- 评论内容将通过JavaScript动态加载 -->
+  </div>
 </div>
-<!-- Hyvor Talk 评论区结束 -->
+
+<!-- 引入评论系统样式 -->
+<link rel="stylesheet" href="{{ '/assets/css/comments.css' | relative_url }}">
+
+<!-- 引入评论系统脚本 -->
+<script src="{{ '/assets/js/comments.js' | relative_url }}" defer></script>
+<!-- 自定义评论系统结束 -->
