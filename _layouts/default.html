@@ -129,28 +129,30 @@
       }
     }
     
-    // 创建顶部装饰元素
-    function createTopDecorations() {
+    // 创建全屏装饰元素
+    function createFullScreenDecorations() {
       const container = document.getElementById('top-decorations');
       
       // 创建月亮元素
       const moons = ['🌙', '🌛', '🌜'];
       for (let i = 0; i < 4; i++) {
         const moon = document.createElement('div');
-        moon.className = 'top-moon';
+        moon.className = 'fullscreen-moon';
         moon.innerHTML = moons[Math.floor(Math.random() * moons.length)];
         moon.style.left = Math.random() * 90 + '%';
+        moon.style.top = Math.random() * 80 + '%';
         moon.style.animationDelay = Math.random() * 3 + 's';
         container.appendChild(moon);
       }
       
       // 创建星星元素
       const stars = ['⭐', '✨', '💫', '🌟'];
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 12; i++) {
         const star = document.createElement('div');
-        star.className = 'top-star';
+        star.className = 'fullscreen-star';
         star.innerHTML = stars[Math.floor(Math.random() * stars.length)];
         star.style.left = Math.random() * 90 + '%';
+        star.style.top = Math.random() * 80 + '%';
         star.style.animationDelay = Math.random() * 4 + 's';
         container.appendChild(star);
       }
@@ -158,9 +160,10 @@
       // 创建云朵元素
       for (let i = 0; i < 3; i++) {
         const cloud = document.createElement('div');
-        cloud.className = 'top-cloud';
+        cloud.className = 'fullscreen-cloud';
         cloud.innerHTML = '☁️';
         cloud.style.left = Math.random() * 80 + '%';
+        cloud.style.top = Math.random() * 60 + '%';
         cloud.style.animationDelay = Math.random() * 5 + 's';
         container.appendChild(cloud);
       }
@@ -168,9 +171,10 @@
       // 创建彗星元素
       for (let i = 0; i < 2; i++) {
         const comet = document.createElement('div');
-        comet.className = 'top-comet';
+        comet.className = 'fullscreen-comet';
         comet.innerHTML = '☄️';
         comet.style.left = Math.random() * 70 + '%';
+        comet.style.top = Math.random() * 50 + '%';
         comet.style.animationDelay = Math.random() * 6 + 's';
         container.appendChild(comet);
       }
@@ -184,8 +188,8 @@
        // 创建星星月亮装饰
        createStarsAndMoons();
        
-       // 创建顶部装饰元素
-       createTopDecorations();
+       // 创建全屏装饰元素
+       createFullScreenDecorations();
       
       // 添加点击事件监听器
       document.addEventListener('click', function(e) {
@@ -220,74 +224,74 @@
   </script>
   
   <style>
-    /* 顶部装饰元素容器 */
+    /* 全屏装饰元素容器 */
     .top-decorations {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 120px;
+      height: 100vh;
       pointer-events: none;
       z-index: 10;
       overflow: hidden;
     }
     
-    /* 顶部月亮样式 */
-    .top-moon {
-      position: absolute;
-      font-size: 24px;
-      animation: topFloat 8s ease-in-out infinite;
-      opacity: 0.9;
-    }
+    /* 全屏月亮样式 */
+     .fullscreen-moon {
+       position: absolute;
+       font-size: 24px;
+       animation: fullscreenFloat 8s ease-in-out infinite;
+       opacity: 0.9;
+     }
+     
+     /* 全屏星星样式 */
+     .fullscreen-star {
+       position: absolute;
+       font-size: 16px;
+       animation: fullscreenTwinkle 3s ease-in-out infinite;
+       opacity: 0.8;
+     }
+     
+     /* 全屏云朵样式 */
+     .fullscreen-cloud {
+       position: absolute;
+       font-size: 20px;
+       animation: fullscreenDrift 12s linear infinite;
+       opacity: 0.7;
+     }
+     
+     /* 全屏彗星样式 */
+     .fullscreen-comet {
+       position: absolute;
+       font-size: 18px;
+       animation: fullscreenShoot 10s ease-in-out infinite;
+       opacity: 0.8;
+     }
     
-    /* 顶部星星样式 */
-    .top-star {
-      position: absolute;
-      font-size: 16px;
-      animation: topTwinkle 3s ease-in-out infinite;
-      opacity: 0.8;
-    }
-    
-    /* 顶部云朵样式 */
-    .top-cloud {
-      position: absolute;
-      font-size: 20px;
-      animation: topDrift 12s linear infinite;
-      opacity: 0.7;
-    }
-    
-    /* 顶部彗星样式 */
-    .top-comet {
-      position: absolute;
-      font-size: 18px;
-      animation: topShoot 10s ease-in-out infinite;
-      opacity: 0.8;
-    }
-    
-    /* 顶部装饰动画 */
-    @keyframes topFloat {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      25% { transform: translateY(-15px) rotate(5deg); }
-      50% { transform: translateY(-10px) rotate(-3deg); }
-      75% { transform: translateY(-20px) rotate(3deg); }
-    }
-    
-    @keyframes topTwinkle {
-      0%, 100% { opacity: 0.8; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.2); }
-    }
-    
-    @keyframes topDrift {
-      0% { transform: translateX(-50px); }
-      100% { transform: translateX(calc(100vw + 50px)); }
-    }
-    
-    @keyframes topShoot {
-      0% { transform: translateX(-100px) translateY(20px) rotate(-15deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateX(calc(100vw + 100px)) translateY(-20px) rotate(-15deg); opacity: 0; }
-    }
+    /* 全屏装饰动画 */
+     @keyframes fullscreenFloat {
+       0%, 100% { transform: translateY(0px) rotate(0deg); }
+       25% { transform: translateY(-15px) rotate(5deg); }
+       50% { transform: translateY(-10px) rotate(-3deg); }
+       75% { transform: translateY(-20px) rotate(3deg); }
+     }
+     
+     @keyframes fullscreenTwinkle {
+       0%, 100% { opacity: 0.8; transform: scale(1); }
+       50% { opacity: 1; transform: scale(1.2); }
+     }
+     
+     @keyframes fullscreenDrift {
+       0% { transform: translateX(-50px); }
+       100% { transform: translateX(calc(100vw + 50px)); }
+     }
+     
+     @keyframes fullscreenShoot {
+       0% { transform: translateX(-100px) translateY(20px) rotate(-15deg); opacity: 0; }
+       10% { opacity: 1; }
+       90% { opacity: 1; }
+       100% { transform: translateX(calc(100vw + 100px)) translateY(-20px) rotate(-15deg); opacity: 0; }
+     }
     
     @keyframes sparkle {
       0% {
@@ -306,7 +310,7 @@
     
     /* 让内容区域可点击 */
     .page-content {
-      cursor: pointer;
+      cursor: default;
     }
     
     /* 美化代码块 */
@@ -333,6 +337,7 @@
       color: #667eea;
       text-decoration: none;
       transition: all 0.3s ease;
+      cursor: pointer;
     }
     
     a:hover {
