@@ -134,51 +134,94 @@
     // 创建全屏装饰元素
     function createFullScreenDecorations() {
       const container = document.getElementById('top-decorations');
+      const isPostPage = document.querySelector('.post-content') !== null;
       
-      // 创建月亮元素
+      // 创建月亮元素 - 在文章页面时避开中央区域
       const moons = ['🌙', '🌛', '🌜'];
       for (let i = 0; i < 4; i++) {
         const moon = document.createElement('div');
         moon.className = 'fullscreen-moon';
         moon.innerHTML = moons[Math.floor(Math.random() * moons.length)];
-        moon.style.left = Math.random() * 90 + '%';
-        moon.style.top = Math.random() * 80 + '%';
+        
+        if (isPostPage) {
+          // 文章页面：放在边缘区域
+          const side = Math.random() < 0.5 ? 'left' : 'right';
+          moon.style.left = side === 'left' ? Math.random() * 15 + '%' : (85 + Math.random() * 15) + '%';
+          moon.style.top = Math.random() * 100 + '%';
+        } else {
+          // 首页：随机分布
+          moon.style.left = Math.random() * 90 + '%';
+          moon.style.top = Math.random() * 80 + '%';
+        }
+        
         moon.style.animationDelay = Math.random() * 3 + 's';
         container.appendChild(moon);
       }
       
-      // 创建星星元素
+      // 创建星星元素 - 在文章页面时避开中央区域
       const stars = ['⭐', '✨', '💫', '🌟'];
       for (let i = 0; i < 12; i++) {
         const star = document.createElement('div');
         star.className = 'fullscreen-star';
         star.innerHTML = stars[Math.floor(Math.random() * stars.length)];
-        star.style.left = Math.random() * 90 + '%';
-        star.style.top = Math.random() * 80 + '%';
+        
+        if (isPostPage) {
+          // 文章页面：放在边缘区域或顶部底部
+          const zone = Math.random();
+          if (zone < 0.4) {
+            // 左右边缘
+            const side = Math.random() < 0.5 ? 'left' : 'right';
+            star.style.left = side === 'left' ? Math.random() * 20 + '%' : (80 + Math.random() * 20) + '%';
+            star.style.top = Math.random() * 100 + '%';
+          } else {
+            // 顶部或底部
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = zone < 0.7 ? Math.random() * 15 + '%' : (85 + Math.random() * 15) + '%';
+          }
+        } else {
+          // 首页：随机分布
+          star.style.left = Math.random() * 90 + '%';
+          star.style.top = Math.random() * 80 + '%';
+        }
+        
         star.style.animationDelay = Math.random() * 4 + 's';
         container.appendChild(star);
       }
       
-      // 创建云朵元素
+      // 创建云朵元素 - 变速漂移
       for (let i = 0; i < 3; i++) {
         const cloud = document.createElement('div');
         cloud.className = 'fullscreen-cloud';
         cloud.innerHTML = '☁️';
         cloud.style.left = Math.random() * 80 + '%';
         cloud.style.top = Math.random() * 60 + '%';
-        cloud.style.animationDelay = Math.random() * 5 + 's';
+        cloud.style.animationDelay = Math.random() * 8 + 's';
+        // 随机动画持续时间，实现变速效果
+        cloud.style.animationDuration = (20 + Math.random() * 15) + 's';
         container.appendChild(cloud);
       }
       
-      // 创建彗星元素
-      for (let i = 0; i < 2; i++) {
+      // 创建彗星元素 - 右上往下坠落，增加数量和拖尾效果
+      const cometCount = isPostPage ? 3 : 5; // 文章页面3个，首页5个
+      for (let i = 0; i < cometCount; i++) {
         const comet = document.createElement('div');
         comet.className = 'fullscreen-comet';
         comet.innerHTML = '☄️';
-        comet.style.left = Math.random() * 70 + '%';
-        comet.style.top = Math.random() * 50 + '%';
-        comet.style.animationDelay = Math.random() * 6 + 's';
+        // 从右上角开始
+        comet.style.right = Math.random() * 20 + '%';
+        comet.style.top = Math.random() * 20 + '%';
+        comet.style.animationDelay = Math.random() * 8 + 's';
+        comet.style.animationDuration = (6 + Math.random() * 4) + 's';
         container.appendChild(comet);
+        
+        // 添加拖尾效果
+        const trail = document.createElement('div');
+        trail.className = 'comet-trail';
+        trail.style.right = Math.random() * 20 + '%';
+        trail.style.top = Math.random() * 20 + '%';
+        trail.style.animationDelay = comet.style.animationDelay;
+        trail.style.animationDuration = comet.style.animationDuration;
+        container.appendChild(trail);
       }
     }
     
@@ -261,7 +304,7 @@
      .fullscreen-cloud {
        position: absolute;
        font-size: 20px;
-       animation: fullscreenDrift 12s linear infinite;
+       animation: fullscreenDrift 25s ease-in-out infinite;
        opacity: 0.7;
      }
      
@@ -269,8 +312,21 @@
      .fullscreen-comet {
        position: absolute;
        font-size: 18px;
-       animation: fullscreenShoot 10s ease-in-out infinite;
-       opacity: 0.8;
+       animation: fullscreenFall 8s ease-in infinite;
+       opacity: 0.9;
+       filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+     }
+     
+     /* 彗星拖尾效果 */
+     .comet-trail {
+       position: absolute;
+       width: 3px;
+       height: 30px;
+       background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+       border-radius: 50%;
+       animation: fullscreenFall 8s ease-in infinite;
+       opacity: 0.6;
+       transform-origin: top right;
      }
     
     /* 全屏装饰动画 */
@@ -287,15 +343,28 @@
      }
      
      @keyframes fullscreenDrift {
-       0% { transform: translateX(-50px); }
-       100% { transform: translateX(calc(100vw + 50px)); }
+       0% { transform: translateX(-50px) scale(0.8); }
+       25% { transform: translateX(25vw) scale(1.1); }
+       50% { transform: translateX(50vw) scale(0.9); }
+       75% { transform: translateX(75vw) scale(1.2); }
+       100% { transform: translateX(calc(100vw + 50px)) scale(0.8); }
      }
      
-     @keyframes fullscreenShoot {
-       0% { transform: translateX(-100px) translateY(20px) rotate(-15deg); opacity: 0; }
-       10% { opacity: 1; }
-       90% { opacity: 1; }
-       100% { transform: translateX(calc(100vw + 100px)) translateY(-20px) rotate(-15deg); opacity: 0; }
+     @keyframes fullscreenFall {
+       0% { 
+         transform: translateX(0) translateY(-50px) rotate(45deg); 
+         opacity: 0; 
+       }
+       10% { 
+         opacity: 1; 
+       }
+       90% { 
+         opacity: 0.8; 
+       }
+       100% { 
+         transform: translateX(-80vw) translateY(calc(100vh + 50px)) rotate(45deg); 
+         opacity: 0; 
+       }
      }
     
     @keyframes sparkle {
