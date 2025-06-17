@@ -190,7 +190,7 @@ class CommentSystem {
         // 创建 FormData 对象
         const formData = new FormData();
         formData.append('pageId', this.pageId);
-        formData.append('username', username);
+        formData.append('nickname', username);
         formData.append('content', content);
         
         // 如果有图片，添加到 FormData
