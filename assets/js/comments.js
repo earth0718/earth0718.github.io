@@ -6,20 +6,25 @@
 class CommentSystem {
   constructor(options = {}) {
     // 配置选项
-    this.config = {
-      apiBaseUrl: options.apiBaseUrl || 'http://localhost:5000/api',
-      pageId: options.pageId || window.location.pathname,
-      containerId: options.containerId || 'comments-container',
-      maxRetries: 3,
-      retryDelay: 1000,
-      ...options
-    };
+    this.apiBaseUrl = options.apiBaseUrl || 'http://127.0.0.1:5000/api';
+    this.pageId = options.pageId || window.location.pathname;
+    this.containerId = options.containerId || 'comments-container';
+    this.commentsPerPage = options.commentsPerPage || 10;
     
-    this.container = null;
-    this.comments = [];
-    this.isLoading = false;
-    this.retryCount = 0;
+    // 分页相关
+    this.currentPage = 1;
+    this.totalPages = 1;
+    this.totalComments = 0;
     
+    // 获取容器元素
+    this.container = document.getElementById(this.containerId);
+    
+    if (!this.container) {
+      console.error(`评论容器 #${this.containerId} 未找到`);
+      return;
+    }
+    
+    // 初始化评论系统
     this.init();
   }
   
@@ -27,188 +32,209 @@ class CommentSystem {
    * 初始化评论系统
    */
   init() {
-    // 等待DOM加载完成
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.setup());
-    } else {
-      this.setup();
-    }
-  }
-  
-  /**
-   * 设置评论系统
-   */
-  setup() {
-    this.container = document.getElementById(this.config.containerId);
-    if (!this.container) {
-      console.error(`评论容器未找到: #${this.config.containerId}`);
-      return;
-    }
-    
-    this.renderCommentForm();
+    this.setupContainer();
     this.loadComments();
   }
   
   /**
-   * 渲染评论表单
+   * 设置容器结构
    */
-  renderCommentForm() {
-    const formHtml = `
+  setupContainer() {
+    this.container.innerHTML = `
       <div class="comment-form-container">
         <h3 class="comment-title">发表评论</h3>
-        <form id="comment-form" class="comment-form">
+        <form class="comment-form" id="comment-form">
           <div class="form-group">
-            <label for="username">昵称（可选）</label>
-            <input 
-              type="text" 
-              id="username" 
-              name="username" 
-              placeholder="匿名" 
-              maxlength="50"
-              class="form-input"
-            >
+            <input type="text" id="username" class="form-input" placeholder="昵称" required maxlength="50">
           </div>
           <div class="form-group">
-            <label for="content">评论内容 *</label>
-            <textarea 
-              id="content" 
-              name="content" 
-              placeholder="请输入您的评论..." 
-              required 
-              maxlength="1000"
-              rows="4"
-              class="form-textarea"
-            ></textarea>
+            <textarea id="content" class="form-textarea" placeholder="请输入评论内容..." required maxlength="500" rows="4"></textarea>
             <div class="char-count">
-              <span id="char-counter">0</span>/1000
+              <span id="char-counter">0</span>/500
             </div>
           </div>
-          <div class="form-actions">
-            <button type="submit" id="submit-btn" class="submit-btn">
-              <span class="btn-text">发表评论</span>
-              <span class="btn-loading" style="display: none;">提交中...</span>
-            </button>
+          <div class="form-group">
+            <label for="image-upload" class="image-upload-label">
+              📷 上传图片
+            </label>
+            <input type="file" id="image-upload" accept="image/*" style="display: none;">
+            <div class="image-preview" id="image-preview" style="display: none;">
+              <img id="preview-img" src="" alt="预览图片">
+              <button type="button" class="remove-image-btn" id="remove-image">×</button>
+            </div>
           </div>
+          <button type="submit" class="submit-btn" id="submit-btn">
+            <span class="btn-text">发表评论</span>
+            <span class="btn-loading" style="display: none;">发表中...</span>
+          </button>
         </form>
       </div>
+      
       <div class="comments-section">
         <h3 class="comments-title">评论列表</h3>
-        <div id="comments-list" class="comments-list">
-          <div class="loading-placeholder">加载评论中...</div>
+        <div class="comments-list" id="comments-list">
+          <!-- 评论将在这里动态加载 -->
+        </div>
+        <div class="pagination" id="pagination" style="display: none;">
+          <!-- 分页控件将在这里动态生成 -->
         </div>
       </div>
     `;
     
-    this.container.innerHTML = formHtml;
-    this.bindFormEvents();
+    this.bindEvents();
   }
   
   /**
-   * 绑定表单事件
+   * 绑定事件
    */
-  bindFormEvents() {
+  bindEvents() {
     const form = document.getElementById('comment-form');
     const contentTextarea = document.getElementById('content');
     const charCounter = document.getElementById('char-counter');
     const submitBtn = document.getElementById('submit-btn');
+    const imageUpload = document.getElementById('image-upload');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const removeImageBtn = document.getElementById('remove-image');
     
     // 字符计数
-    contentTextarea.addEventListener('input', (e) => {
-      const length = e.target.value.length;
-      charCounter.textContent = length;
+    contentTextarea.addEventListener('input', () => {
+      const count = contentTextarea.value.length;
+      charCounter.textContent = count;
       
-      if (length > 1000) {
-        charCounter.style.color = '#e74c3c';
-      } else if (length > 800) {
-        charCounter.style.color = '#f39c12';
+      // 更新计数器颜色
+      if (count > 400) {
+        charCounter.style.color = count > 450 ? '#e74c3c' : '#f39c12';
       } else {
-        charCounter.style.color = '#7f8c8d';
+        charCounter.style.color = '';
       }
     });
     
-    // 表单提交
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      this.submitComment();
+    // 图片上传预览
+    imageUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        // 验证文件类型
+        if (!file.type.match('image.*')) {
+          this.showMessage('请上传图片文件', 'error');
+          imageUpload.value = '';
+          return;
+        }
+        
+        // 验证文件大小 (最大 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          this.showMessage('图片大小不能超过 5MB', 'error');
+          imageUpload.value = '';
+          return;
+        }
+        
+        // 显示预览
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // 移除图片
+    removeImageBtn.addEventListener('click', () => {
+      imageUpload.value = '';
+      previewImg.src = '';
+      imagePreview.style.display = 'none';
     });
     
     // 防止重复提交
-    submitBtn.addEventListener('click', (e) => {
-      if (this.isLoading) {
-        e.preventDefault();
+    let isSubmitting = false;
+    
+    // 表单提交
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (isSubmitting) return;
+      
+      const username = document.getElementById('username').value.trim();
+      const content = contentTextarea.value.trim();
+      const imageFile = imageUpload.files[0];
+      
+      // 验证输入
+      if (!username) {
+        this.showMessage('请输入昵称', 'error');
+        return;
+      }
+      
+      if (!content && !imageFile) {
+        this.showMessage('请输入评论内容或上传图片', 'error');
+        return;
+      }
+      
+      if (username.length > 50) {
+        this.showMessage('昵称不能超过50个字符', 'error');
+        return;
+      }
+      
+      if (content.length > 500) {
+        this.showMessage('评论内容不能超过500个字符', 'error');
+        return;
+      }
+      
+      // 设置提交状态
+      isSubmitting = true;
+      submitBtn.classList.add('loading');
+      submitBtn.querySelector('.btn-text').style.display = 'none';
+      submitBtn.querySelector('.btn-loading').style.display = 'inline';
+      submitBtn.disabled = true;
+      
+      try {
+        // 创建 FormData 对象
+        const formData = new FormData();
+        formData.append('pageId', this.pageId);
+        formData.append('username', username);
+        formData.append('content', content);
+        
+        // 如果有图片，添加到 FormData
+        if (imageFile) {
+          formData.append('image', imageFile);
+        }
+        
+        // 发送评论请求
+        const response = await fetch(`${this.apiBaseUrl}/comments`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          // 评论成功
+          this.showMessage('评论发表成功！', 'success');
+          form.reset();
+          charCounter.textContent = '0';
+          imagePreview.style.display = 'none';
+          previewImg.src = '';
+          
+          // 重新加载评论
+          this.loadComments();
+        } else {
+          // 评论失败
+          this.showMessage(`评论失败: ${result.message || '未知错误'}`, 'error');
+        }
+      } catch (error) {
+        console.error('评论提交错误:', error);
+        this.showMessage('评论提交失败，请稍后重试', 'error');
+      } finally {
+        // 恢复按钮状态
+        isSubmitting = false;
+        submitBtn.classList.remove('loading');
+        submitBtn.querySelector('.btn-text').style.display = 'inline';
+        submitBtn.querySelector('.btn-loading').style.display = 'none';
+        submitBtn.disabled = false;
       }
     });
   }
   
-  /**
-   * 提交评论
-   */
-  async submitComment() {
-    if (this.isLoading) return;
-    
-    const form = document.getElementById('comment-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const btnText = submitBtn.querySelector('.btn-text');
-    const btnLoading = submitBtn.querySelector('.btn-loading');
-    
-    const formData = new FormData(form);
-    const username = formData.get('username').trim() || '匿名';
-    const content = formData.get('content').trim();
-    
-    // 验证
-    if (!content) {
-      this.showMessage('请输入评论内容', 'error');
-      return;
-    }
-    
-    if (content.length > 1000) {
-      this.showMessage('评论内容不能超过1000字符', 'error');
-      return;
-    }
-    
-    // 设置加载状态
-    this.isLoading = true;
-    submitBtn.disabled = true;
-    // const btnText = submitBtn.querySelector('.btn-text'); // 删除此行
-    btnText.style.display = 'none';
-    btnLoading.style.display = 'inline';
-    
-    try {
-      const response = await fetch(`${this.config.apiBaseUrl}/comments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          page_id: this.config.pageId,
-          username: username,
-          content: content
-        })
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        this.showMessage('评论发表成功！', 'success');
-        form.reset();
-        document.getElementById('char-counter').textContent = '0';
-        // 重新加载评论列表
-        await this.loadComments();
-      } else {
-        this.showMessage(result.message || '评论发表失败', 'error');
-      }
-      
-    } catch (error) {
-      console.error('提交评论失败:', error);
-      this.showMessage('网络错误，请稍后重试', 'error');
-    } finally {
-      // 恢复按钮状态
-      this.isLoading = false;
-      submitBtn.disabled = false;
-      btnText.style.display = 'inline';
-      btnLoading.style.display = 'none';
-    }
-  }
+
   
   /**
    * 加载评论列表
@@ -219,33 +245,34 @@ class CommentSystem {
     try {
       commentsList.innerHTML = '<div class="loading-placeholder">加载评论中...</div>';
       
-      const response = await fetch(
-        `${this.config.apiBaseUrl}/comments?page_id=${encodeURIComponent(this.config.pageId)}`
-      );
+      const url = `${this.apiBaseUrl}/comments?pageId=${encodeURIComponent(this.pageId)}&page=${this.currentPage}&per_page=${this.commentsPerPage}`;
+      const response = await fetch(url);
       
-      const result = await response.json();
-      
-      if (result.success) {
-        this.comments = result.comments;
-        this.renderComments();
-        this.retryCount = 0; // 重置重试计数
-      } else {
-        throw new Error(result.message || '加载评论失败');
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
+      
+      const data = await response.json();
+      this.renderComments(data);
+      
+      // 重置重试计数
+      if (!this.retryCount) this.retryCount = 0;
+      this.retryCount = 0;
       
     } catch (error) {
       console.error('加载评论失败:', error);
       
       // 重试机制
-      if (this.retryCount < this.config.maxRetries) {
+      if (!this.retryCount) this.retryCount = 0;
+      if (this.retryCount < 3) {
         this.retryCount++;
         setTimeout(() => {
           this.loadComments();
-        }, this.config.retryDelay * this.retryCount);
+        }, 1000 * this.retryCount);
         
         commentsList.innerHTML = `
           <div class="error-placeholder">
-            加载失败，正在重试... (${this.retryCount}/${this.config.maxRetries})
+            加载失败，正在重试... (${this.retryCount}/3)
           </div>
         `;
       } else {
@@ -262,32 +289,134 @@ class CommentSystem {
   /**
    * 渲染评论列表
    */
-  renderComments() {
+  renderComments(data) {
     const commentsList = document.getElementById('comments-list');
+    const paginationContainer = document.getElementById('pagination');
     
-    if (this.comments.length === 0) {
-      commentsList.innerHTML = '<div class="no-comments">暂无评论，来发表第一条评论吧！</div>';
+    // 处理API响应数据结构
+    let actualData = data;
+    if (data.success && data.data) {
+      actualData = data.data;
+    }
+    
+    // 更新分页信息
+    if (actualData.pagination) {
+      this.currentPage = actualData.pagination.page;
+      this.totalPages = actualData.pagination.pages;
+      this.totalComments = actualData.pagination.total;
+    }
+    
+    const comments = actualData.comments || actualData;
+    
+    if (!comments || comments.length === 0) {
+      commentsList.innerHTML = '<div class="no-comments-placeholder">暂无评论，快来发表第一条评论吧！</div>';
+      paginationContainer.style.display = 'none';
       return;
     }
     
-    const commentsHtml = this.comments.map(comment => {
-      const date = new Date(comment.created_at);
-      const formattedDate = this.formatDate(date);
+    const commentsHtml = comments.map(comment => {
+      const date = new Date(comment.timestamp || comment.created_at).toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      // 转义HTML内容
+      const safeContent = this.escapeHtml(comment.content);
+      
+      const imageHtml = comment.image ? 
+        `<div class="comment-image">
+          <img src="${this.apiBaseUrl.replace('/api', '')}${comment.image}" alt="评论图片" onclick="this.classList.toggle('enlarged')">
+        </div>` : '';
       
       return `
-        <div class="comment-item" data-id="${comment.id}">
+        <div class="comment-item">
           <div class="comment-header">
-            <span class="comment-author">${this.escapeHtml(comment.username)}</span>
-            <span class="comment-date">${formattedDate}</span>
+            <span class="comment-author">${this.escapeHtml(comment.nickname || comment.username)}</span>
+            <span class="comment-date">${date}</span>
           </div>
-          <div class="comment-content">
-            ${this.escapeHtml(comment.content).replace(/\n/g, '<br>')}
-          </div>
+          <div class="comment-content">${safeContent}</div>
+          ${imageHtml}
         </div>
       `;
     }).join('');
     
     commentsList.innerHTML = commentsHtml;
+    
+    // 渲染分页
+    this.renderPagination();
+  }
+  
+  /**
+   * 渲染分页控件
+   */
+  renderPagination() {
+    const paginationContainer = document.getElementById('pagination');
+    
+    if (this.totalPages <= 1) {
+      paginationContainer.style.display = 'none';
+      return;
+    }
+    
+    paginationContainer.style.display = 'block';
+    
+    let paginationHtml = `
+      <div class="pagination-info">
+        第 ${this.currentPage} 页，共 ${this.totalPages} 页 (${this.totalComments} 条评论)
+      </div>
+      <div class="pagination-buttons">
+    `;
+    
+    // 上一页按钮
+    if (this.currentPage > 1) {
+      paginationHtml += `<button class="page-btn" onclick="commentSystem.loadPage(${this.currentPage - 1})">上一页</button>`;
+    }
+    
+    // 页码按钮
+    const startPage = Math.max(1, this.currentPage - 2);
+    const endPage = Math.min(this.totalPages, this.currentPage + 2);
+    
+    if (startPage > 1) {
+      paginationHtml += `<button class="page-btn" onclick="commentSystem.loadPage(1)">1</button>`;
+      if (startPage > 2) {
+        paginationHtml += `<span class="page-ellipsis">...</span>`;
+      }
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      const activeClass = i === this.currentPage ? ' active' : '';
+      paginationHtml += `<button class="page-btn${activeClass}" onclick="commentSystem.loadPage(${i})">${i}</button>`;
+    }
+    
+    if (endPage < this.totalPages) {
+      if (endPage < this.totalPages - 1) {
+        paginationHtml += `<span class="page-ellipsis">...</span>`;
+      }
+      paginationHtml += `<button class="page-btn" onclick="commentSystem.loadPage(${this.totalPages})">${this.totalPages}</button>`;
+    }
+    
+    // 下一页按钮
+    if (this.currentPage < this.totalPages) {
+      paginationHtml += `<button class="page-btn" onclick="commentSystem.loadPage(${this.currentPage + 1})">下一页</button>`;
+    }
+    
+    paginationHtml += '</div>';
+    
+    paginationContainer.innerHTML = paginationHtml;
+  }
+  
+  /**
+   * 加载指定页面
+   */
+  loadPage(page) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) {
+      return;
+    }
+    
+    this.currentPage = page;
+    this.loadComments();
   }
   
   /**
@@ -329,6 +458,38 @@ class CommentSystem {
   }
   
   /**
+   * 预览上传的图片
+   */
+  previewImage(file) {
+    const preview = document.getElementById('image-preview');
+    const removeBtn = document.getElementById('remove-image');
+    
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        removeBtn.style.display = 'inline-block';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  
+  /**
+   * 移除图片预览
+   */
+  removeImagePreview() {
+    const fileInput = document.getElementById('comment-image');
+    const preview = document.getElementById('image-preview');
+    const removeBtn = document.getElementById('remove-image');
+    
+    fileInput.value = '';
+    preview.src = '';
+    preview.style.display = 'none';
+    removeBtn.style.display = 'none';
+  }
+  
+  /**
    * 显示消息提示
    */
   showMessage(message, type = 'info') {
@@ -364,7 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (container) {
     // 从页面获取配置
     const pageId = container.dataset.pageId || window.location.pathname;
-    const apiUrl = container.dataset.apiUrl || 'http://localhost:5000/api';
+    const apiUrl = container.dataset.apiUrl || 'http://127.0.0.1:5000/api';
     
     commentSystem = new CommentSystem({
       pageId: pageId,
