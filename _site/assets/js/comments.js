@@ -6,7 +6,7 @@
 class CommentSystem {
   constructor(options = {}) {
     // 配置选项
-    this.apiBaseUrl = options.apiBaseUrl || 'http://127.0.0.1:5000/api';
+    this.apiBaseUrl = options.apiBaseUrl || 'https://bpi.liubingbing0826.xyz/api';
     this.pageId = options.pageId || window.location.pathname;
     this.containerId = options.containerId || 'comments-container';
     this.commentsPerPage = options.commentsPerPage || 10;
@@ -525,7 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (container) {
     // 从页面获取配置
     const pageId = container.dataset.pageId || window.location.pathname;
-    const apiUrl = container.dataset.apiUrl || 'http://127.0.0.1:5000/api';
+    const apiUrl = container.dataset.apiUrl || 'https://bpi.liubingbing0826.xyz/api';
     
     commentSystem = new CommentSystem({
       pageId: pageId,
