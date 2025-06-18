@@ -192,15 +192,23 @@
 }
 
 .comment-author {
-  color: #64b5f6; /* 保持或调整颜色 */
-  font-weight: 600; /* 保持或调整字重 */
-  font-size: 0.95rem; /* 保持或调整字号 */
-  /* 模仿代码高亮的背景和边框 */
-  background: rgba(255, 255, 255, 0.05); /* 轻微背景色 */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* 轻微边框 */
-  padding: 2px 6px; /* 添加内边距 */
-  border-radius: 4px; /* 圆角 */
+  color: #64b5f6; /* 保持蓝色，增强可读性 */
+  font-weight: 600; /* 保持字重 */
+  font-size: 0.95rem; /* 保持字号 */
+  /* 淡化透明框效果，更加自然 */
+  background: rgba(100, 181, 246, 0.05); /* 大幅降低背景透明度 */
+  border: 1px solid rgba(100, 181, 246, 0.1); /* 大幅降低边框透明度 */
+  padding: 2px 6px; /* 减少内边距 */
+  border-radius: 3px; /* 减小圆角 */
   display: inline-block; /* 使 padding 生效 */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 减轻文本阴影 */
+  transition: all 0.3s ease; /* 添加过渡效果 */
+}
+
+.comment-author:hover {
+  background: rgba(100, 181, 246, 0.1);
+  border-color: rgba(100, 181, 246, 0.2);
+  transform: translateY(-1px);
 }
 
 .comment-date {
@@ -209,18 +217,21 @@
 }
 
 .comment-content {
-  color: #000000; /* 将颜色修改为黑色 */
+  color: rgba(255, 255, 255, 0.95); /* 改为白色，提高夜晚模式可读性 */
   line-height: 1.6;
   font-size: 0.95rem;
-  /* 模仿代码高亮的背景和边框 */
-  background: rgba(255, 255, 255, 0.03); /* 更轻微的背景色 */
-  border: 1px solid rgba(255, 255, 255, 0.08); /* 更轻微的边框 */
-  padding: 8px 12px; /* 添加内边距 */
-  border-radius: 6px; /* 圆角 */
+  /* 淡化透明框效果，与评论作者保持一致 */
+  background: rgba(255, 255, 255, 0.03) !important; /* 大幅降低背景透明度 */
+  border: 1px solid rgba(255, 255, 255, 0.08); /* 大幅降低边框透明度 */
+  padding: 8px 12px; /* 减少内边距 */
+  border-radius: 4px; /* 减小圆角 */
   margin-top: 0.5rem; /* 与用户名隔开一些距离 */
-  text-shadow: 0 0 3px rgba(224, 224, 224, 0.3); /* 添加文本阴影以产生高亮效果 */
-}
   word-wrap: break-word;
+  /* 确保文本可以被正常选择 */
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
 }
 
 /* 占位符样式 */
